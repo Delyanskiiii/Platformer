@@ -5,12 +5,13 @@ int main()
 {
     Color darkGreen = Color{20, 160, 133, 255};
 
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    int display = GetCurrentMonitor();
 
     Ball ball = Ball();
 
-    InitWindow(screenWidth, screenHeight, "My first RAYLIB program!");
+    InitWindow(GetMonitorWidth(display), GetMonitorHeight(display), "main");
+    ToggleFullscreen();
+    HideCursor();
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
