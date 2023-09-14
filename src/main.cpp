@@ -1,25 +1,25 @@
 #include <raylib.h>
-#include "ball.h"
+#include "player.h"
 
 int main()
 {
-    Color darkGreen = Color{20, 160, 133, 255};
+    Color skyBlue = Color{135, 206, 235, 255};
 
     int display = GetCurrentMonitor();
 
-    Ball ball = Ball();
+    Player player = Player();
 
     InitWindow(GetMonitorWidth(display), GetMonitorHeight(display), "main");
     ToggleFullscreen();
     HideCursor();
-    SetTargetFPS(60);
+    SetTargetFPS(100);
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
-        ClearBackground(darkGreen);
-        ball.Update();
-        ball.Draw();
+        ClearBackground(skyBlue);
+        player.Update();
+        player.Draw();
         EndDrawing();
     }
 
