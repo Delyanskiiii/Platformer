@@ -4,10 +4,10 @@
 
 Player::Player()
 {
-    // Pair size = Pair(10, 10);
-    // Pair position = Pair(100, 100);
-    // Pair velocity = Pair(0, 0);
-    // Pair input = Pair(0, 0);
+    size.Set(10, 10);
+    position.Set(100, 100);
+    velocity.Set(10, 10);
+    input.Set(0, 0);
     // Pair pastVelocity[100];
 }
 
