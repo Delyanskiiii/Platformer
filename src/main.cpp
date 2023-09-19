@@ -2,6 +2,7 @@
 #include <iostream>
 #include "player.h"
 #include "input.h"
+#include "world.h"
 
 int diff;
 
@@ -13,6 +14,7 @@ int main()
 
     Player player = Player();
     Input input = Input();
+    World world = World();
 
     InitWindow(GetMonitorWidth(display), GetMonitorHeight(display), "main");
 
@@ -21,6 +23,7 @@ int main()
     SetTargetFPS(100);
 
     diff = GetMonitorWidth(display) / 320;
+    // world.Draw();
 
     while (!WindowShouldClose())
     {
