@@ -1,3 +1,3 @@
 // #pragma once
 
-// extern int diff;
+int diff;

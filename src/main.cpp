@@ -3,8 +3,7 @@
 #include "player.h"
 #include "input.h"
 #include "world.h"
-
-int diff;
+#include "main.h"
 
 int main()
 {
@@ -23,12 +22,13 @@ int main()
     SetTargetFPS(100);
 
     diff = GetMonitorWidth(display) / 320;
-    // world.Draw();
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(skyBlue);
+        DrawFPS(2480, 0);
+        world.Draw();
         player.Update(input.GetInput(IsKeyDown(KEY_LEFT), IsKeyDown(KEY_RIGHT), IsKeyDown(KEY_SPACE), IsKeyDown(KEY_DOWN)));
         player.Draw();
         EndDrawing();
