@@ -85,8 +85,8 @@ World::World() {
 void World::Draw() {
     for (const auto& block : blocks) {
         for (int i = 0; i < 100; ++i) {
-            std::cout << block.x << std::endl;
-            DrawRectangle(block.x * diff * 10, block.y * diff * 10, 1 * diff, 1 * diff, Color{block.pixels[i].red, block.pixels[i].green, block.pixels[i].blue, 255});
+            // std::cout << block.x * diff * 10 + i % 10 << std::endl;
+            DrawRectangle(block.x * diff * 10 + i % 10 * diff, block.y * diff * 10 + i / 10 * diff, 1 * diff, 1 * diff, Color{block.pixels[i].red, block.pixels[i].green, block.pixels[i].blue, 255});
         }
     }
 }

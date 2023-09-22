@@ -22,7 +22,7 @@ int main()
     SetTargetFPS(100);
 
     diff = GetMonitorWidth(display) / 320;
-
+    // world.Draw();
     while (!WindowShouldClose())
     {
         BeginDrawing();

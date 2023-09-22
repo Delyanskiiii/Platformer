@@ -6,8 +6,8 @@
 extern int diff;
 
 Player::Player() {
-    size.Set(5, 5);
-    position.Set(20, 20);
+    size.Set(10, 10);
+    position.Set(155, 85);
     velocity.Set(1, 1);
     // Pair pastVelocity[100];
 }
