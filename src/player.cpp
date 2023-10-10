@@ -1,25 +1,27 @@
 #include <raylib.h>
 #include "player.h"
-#include "pair.h"
-// #include "main.h"
+#include "input.h"
 
-extern int diff;
-
-Player::Player() {
-    size.Set(10, 10);
-    position.Set(155, 85);
-    velocity.Set(1, 1);
+Player::Player(int diff) {
+    resolution_scale = diff;
+    size.x = 10;
+    size = { 10, 10 };
+    position = { 155, 85 };
+    velocity = { 1, 1 };
+    inputer = Input();
     // Pair pastVelocity[100];
 }
 
-void Player::Update(Pair input) {
-    if (position.value1 + size.value1 / 2 < GetScreenWidth() / diff && position.value1 - size.value1 / 2 > 0)
-        position.value1 += input.value1 * velocity.value1;
+void Player::Update() {
+    input = inputer.GetInput();
 
-    if (position.value2 + size.value2 / 2 < GetScreenHeight() / diff && position.value2 - size.value2 / 2 > 0)
-        position.value2 += input.value2 * velocity.value2;
+    if ((position.x + size.x < GetScreenWidth() / resolution_scale && position.x > 0) || (position.x + size.x == GetScreenWidth() / resolution_scale && input.x < 0) || (position.x == 0 && input.x > 0))
+        position.x += input.x * velocity.x;
+
+     if ((position.y + size.y < GetScreenHeight() / resolution_scale && position.y  > 0) || (position.y + size.y == GetScreenHeight() / resolution_scale && input.y < 0) || (position.y  == 0 && input.y > 0))
+        position.y += input.y * velocity.y;
 }
 
 void Player::Draw() {
-    DrawRectangle(position.value1 * diff, position.value2 * diff, size.value1 * diff, size.value2 * diff, WHITE);
+    DrawRectangle(position.x * resolution_scale, position.y * resolution_scale, size.x * resolution_scale, size.y * resolution_scale, WHITE);
 }

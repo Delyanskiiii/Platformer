@@ -1,16 +1,21 @@
 #pragma once
-#include "pair.h"
+#include "input.h"
+#include <raylib.h>
 
 class Player
 {
     public:
-        Player();
-        void Update(Pair input);
+        Player(int diff);
+        void Update();
         void Draw();
+        // Vector2 position() { return position; }
 
     private:
-        Pair size;
-        Pair position;
-        Pair velocity;
-        Pair pastVelocity[100];
+        int resolution_scale;
+        Input inputer;
+        Vector2 size;
+        Vector2 input;
+        Vector2 position;
+        Vector2 velocity;
+        Vector2 pastVelocity[100];
 };

@@ -1,13 +1,13 @@
 #pragma once
-#include "pair.h"
+#include <raylib.h>
 
 class Input
 {
     public:
-        Input();
-        Pair GetInput(bool Left, bool Right, bool Up, bool Down);
+        Input() : prevInput{0}, input{0} { }
+        Vector2 GetInput();
 
     private:
-        Pair prevInput;
-        Pair input;
+        Vector2 prevInput;
+        Vector2 input;
 };
