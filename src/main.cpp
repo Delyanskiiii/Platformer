@@ -1,7 +1,6 @@
 #include <raylib.h>
 #include <iostream>
-#include "player.h"
-// #include "world.h"
+#include "world.h"
 
 int main()
 {
@@ -17,18 +16,15 @@ int main()
 
     int diff = GetMonitorWidth(display) / 320;
 
-    Player player = Player(diff);
-    // World world = World();
+    World world = World(diff);
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(skyBlue);
         DrawFPS(2480, 0);
-        player.Update();
-        // world.Update(player.position());
-        // world.Draw();
-        player.Draw();
+        world.Update();
+        world.Draw();
         EndDrawing();
     }
 

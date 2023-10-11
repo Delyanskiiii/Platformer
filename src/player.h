@@ -6,7 +6,7 @@ class Player
 {
     public:
         Player(int diff);
-        void Update();
+        Vector2 Update();
         void Draw();
         // Vector2 position() { return position; }
 
