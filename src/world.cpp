@@ -7,93 +7,58 @@
 #include <algorithm>
 #include "player.h"
 
-// bool CompareBlocks(const Block& a, const Block& b) {
-//     if (a.x == b.x) {
-//         return a.y < b.y;
-//     }
-//     return a.x < b.x;
-// }
-
 World::World(int diff) {
-    player = Player(diff);
     resolution_scale = diff;
-    std::ifstream inFile("levels/1.txt");
+    player = Player(resolution_scale);
 
-    if (inFile.is_open()) {
-        // Read existing data from the file
+    std::ifstream block_file("levels/blocks.txt");
+
+    if (block_file.is_open()) {
         std::string line;
-        while (std::getline(inFile, line)) {
+        while (std::getline(block_file, line)) {
             std::istringstream iss(line);
-            Block loadedBlock;
+            Block loaded_block;
 
-            // Parse x and y
-            if (!(iss >> loadedBlock.x >> loadedBlock.y)) {
-                std::cerr << "Error parsing line: " << line << std::endl;
-                continue; // Skip this line if parsing fails
-            }
-
-            // Parse 100 pixels
-            for (int i = 0; i < 100; ++i) {
-                if (!(iss >> loadedBlock.pixels[i].red >> loadedBlock.pixels[i].green >> loadedBlock.pixels[i].blue >> loadedBlock.pixels[i].level)) {
-                    std::cerr << "Error parsing pixels for Block at (" << loadedBlock.x << ", " << loadedBlock.y << ")" << std::endl;
-                    break; // Stop parsing pixels if an error occurs
+            for (int i = 0; i < 25; ++i) {
+                if (!(iss >> loaded_block.pixels[i].depth >> loaded_block.pixels[i].red >> loaded_block.pixels[i].green >> loaded_block.pixels[i].blue)) {
+                    break;
                 }
             }
 
-            // Add the loaded block to the vector
-            blocks.push_back(loadedBlock);
+            blocks.push_back(loaded_block);
         }
-        inFile.close();
-        dynamic_blocks = blocks;
+        block_file.close();
     }
 
-    // // Create a new data point and add it to the vector
-    // DataPoint newDataPoint;
-    // newDataPoint.x = 1;
-    // newDataPoint.y = 3;
-    // newDataPoint.colors[0] = 255; // Red
-    // newDataPoint.colors[1] = 128; // Green
-    // newDataPoint.colors[2] = 0;   // Blue
+    std::ifstream level_file("levels/level_1.txt");
 
-    // dataPoints.push_back(newDataPoint);
+    if (level_file.is_open()) {
+        std::string line;
+        while (std::getline(level_file, line)) {
+            std::istringstream iss(line);
+            Position loaded_position;
 
-    // // Sort the data points by x and then by y
-    // std::sort(dataPoints.begin(), dataPoints.end(), CompareBlocks);
+            if (!(iss >> loaded_position.x >> loaded_position.y >> loaded_position.block_index)) {
+                break;
+            }
 
-    // // Open the file for writing
-    // std::ofstream outFile("data_points.txt");
-
-    // if (!outFile.is_open()) {
-    //     std::cerr << "Failed to open the file for writing." << std::endl;
-    //     // return 1;
-    // }
-
-    // // Write the sorted struct data to the text file on separate lines
-    // for (const auto& dp : dataPoints) {
-    //     outFile << dp.x << " " << dp.y << " " << dp.colors[0] << " "
-    //             << dp.colors[1] << " " << dp.colors[2] << std::endl;
-    // }
-    // outFile.close();
-
-    // // Display the sorted loaded data
-    // for (const auto& dp : dataPoints) {
-    //     std::cout << "x: " << dp.x << " y: " << dp.y << " Colors: "
-    //               << dp.colors[0] << " " << dp.colors[1] << " " << dp.colors[2] << std::endl;
-    // }
-
-    // return 0;
+            block_positions.push_back(loaded_position);
+        }
+        level_file.close();
+    }
 }
 
 void World::Update() {
     Vector2 player_position = player.Update();
-    
 }
 
 void World::Draw() {
-    for (const auto& block : dynamic_blocks) {
-        for (int i = 0; i < 100; ++i) {
-            // std::cout << block.x * diff * 10 + i % 10 << std::endl;
-            DrawRectangle(block.x * resolution_scale * 10 + i % 10 * resolution_scale, block.y * resolution_scale * 10 + i / 10 * resolution_scale, 1 * resolution_scale, 1 * resolution_scale, Color{block.pixels[i].red, block.pixels[i].green, block.pixels[i].blue, 255});
+    for (const auto& block_position : block_positions) {
+        auto block = blocks[block_position.block_index];
+        // DrawRectangle(0, 0, 1 * resolution_scale, 1 * resolution_scale, Color{current_block.pixels[0].red, current_block.pixels[0].green, current_block.pixels[0].blue, 255});
+
+        for (int i = 0; i < 25; ++i) {
+            DrawRectangle(block_position.x * resolution_scale * 5 + i % 5 * resolution_scale, block_position.y * resolution_scale * 5 + i / 5 * resolution_scale, 1 * resolution_scale, 1 * resolution_scale, Color{block.pixels[i].red, block.pixels[i].green, block.pixels[i].blue, 255});
         }
     }
     player.Draw();

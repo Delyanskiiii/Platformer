@@ -5,9 +5,9 @@
 Player::Player(int diff) {
     resolution_scale = diff;
     size.x = 10;
-    size = { 10, 10 };
-    position = { 155, 85 };
-    velocity = { 1, 1 };
+    size = { 5, 5 };
+    position = { 0, 1360 };
+    velocity = { 8, 8 };
     inputer = Input();
     // Pair pastVelocity[100];
 }
