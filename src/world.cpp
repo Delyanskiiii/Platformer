@@ -12,25 +12,6 @@ World::World(int diff) {
     player = Player(resolution_scale);
     texFull = LoadTexture("levels/light_test.png");
 
-    // std::ifstream block_file("levels/blocks.txt");
-
-    // if (block_file.is_open()) {
-    //     std::string line;
-    //     while (std::getline(block_file, line)) {
-    //         std::istringstream iss(line);
-    //         Block loaded_block;
-
-    //         for (int i = 0; i < 25; ++i) {
-    //             if (!(iss >> loaded_block.pixels[i].depth >> loaded_block.pixels[i].red >> loaded_block.pixels[i].green >> loaded_block.pixels[i].blue)) {
-    //                 break;
-    //             }
-    //         }
-
-    //         blocks.push_back(loaded_block);
-    //     }
-    //     block_file.close();
-    // }
-
     std::ifstream level_file("levels/level_1.txt");
 
     if (level_file.is_open()) {
