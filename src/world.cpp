@@ -10,25 +10,26 @@
 World::World(int diff) {
     resolution_scale = diff;
     player = Player(resolution_scale);
+    texFull = LoadTexture("levels/light_test.png");
 
-    std::ifstream block_file("levels/blocks.txt");
+    // std::ifstream block_file("levels/blocks.txt");
 
-    if (block_file.is_open()) {
-        std::string line;
-        while (std::getline(block_file, line)) {
-            std::istringstream iss(line);
-            Block loaded_block;
+    // if (block_file.is_open()) {
+    //     std::string line;
+    //     while (std::getline(block_file, line)) {
+    //         std::istringstream iss(line);
+    //         Block loaded_block;
 
-            for (int i = 0; i < 25; ++i) {
-                if (!(iss >> loaded_block.pixels[i].depth >> loaded_block.pixels[i].red >> loaded_block.pixels[i].green >> loaded_block.pixels[i].blue)) {
-                    break;
-                }
-            }
+    //         for (int i = 0; i < 25; ++i) {
+    //             if (!(iss >> loaded_block.pixels[i].depth >> loaded_block.pixels[i].red >> loaded_block.pixels[i].green >> loaded_block.pixels[i].blue)) {
+    //                 break;
+    //             }
+    //         }
 
-            blocks.push_back(loaded_block);
-        }
-        block_file.close();
-    }
+    //         blocks.push_back(loaded_block);
+    //     }
+    //     block_file.close();
+    // }
 
     std::ifstream level_file("levels/level_1.txt");
 
@@ -48,18 +49,15 @@ World::World(int diff) {
     }
 }
 
-void World::Update() {
+Vector2 World::Update() {
     Vector2 player_position = player.Update();
+    return player_position;
 }
 
 void World::Draw() {
-    for (const auto& block_position : block_positions) {
-        auto block = blocks[block_position.block_index];
-        // DrawRectangle(0, 0, 1 * resolution_scale, 1 * resolution_scale, Color{current_block.pixels[0].red, current_block.pixels[0].green, current_block.pixels[0].blue, 255});
-
-        for (int i = 0; i < 25; ++i) {
-            DrawRectangle(block_position.x * resolution_scale * 5 + i % 5 * resolution_scale, block_position.y * resolution_scale * 5 + i / 5 * resolution_scale, 1 * resolution_scale, 1 * resolution_scale, Color{block.pixels[i].red, block.pixels[i].green, block.pixels[i].blue, 255});
-        }
-    }
+    DrawTextureEx(texFull, {0, 0}, 0, resolution_scale, WHITE);
+    // for (const auto& block_position : block_positions) {
+    //     DrawTextureEx(texFull, {block_position.x * resolution_scale * 5, block_position.y * resolution_scale * 5}, 0, resolution_scale, WHITE);
+    // }
     player.Draw();
 }
