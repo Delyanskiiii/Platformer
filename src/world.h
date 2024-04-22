@@ -32,5 +32,5 @@ class World {
         std::vector<Position> block_positions;
         int resolution_scale;
         Texture2D texFull;
-        Player player = Player(1);
+        Player player = Player(1, 1, 1);
 };

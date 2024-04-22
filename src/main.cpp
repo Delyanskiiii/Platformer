@@ -5,21 +5,24 @@
 int main()
 {
     int display = GetCurrentMonitor();
-    InitWindow(GetMonitorWidth(display), GetMonitorHeight(display), "main");
+    int width = GetMonitorWidth(display);
+    int height = GetMonitorHeight(display);
+    InitWindow(width, height, "main");
 
     Color skyBlue = Color{135, 206, 235, 255};
     Texture2D texFull = LoadTexture("levels/light_test.png");
     Shader shader = LoadShader(0, TextFormat("src/shader.fs"));
     SetShaderValue(shader, GetShaderLocation(shader, "ourTexture"), &texFull, SHADER_UNIFORM_VEC2);
 
-    Vector2 light_strength_value = {5, 5};
+    int diff = GetMonitorWidth(display) / 320;
+    SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &diff, SHADER_UNIFORM_VEC2);
+
+    Vector2 light_strength_value = {5 * diff, 5 * diff};
     SetShaderValue(shader, GetShaderLocation(shader, "lightStrength"), &light_strength_value, SHADER_UNIFORM_VEC2);
 
     ToggleFullscreen();
     HideCursor();
     SetTargetFPS(100);
-
-    int diff = GetMonitorWidth(display) / 320;
 
     World world = World(diff);
     int loc_index = GetShaderLocation(shader, "lightPosition");

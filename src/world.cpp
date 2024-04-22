@@ -9,7 +9,7 @@
 
 World::World(int diff) {
     resolution_scale = diff;
-    player = Player(resolution_scale);
+    player = Player(resolution_scale, GetScreenWidth(), GetScreenHeight());
     texFull = LoadTexture("levels/light_test.png");
 
     std::ifstream level_file("levels/level_1.txt");

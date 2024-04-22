@@ -5,7 +5,7 @@
 class Player
 {
     public:
-        Player(int diff);
+        Player(int diff, float width, float height);
         Vector2 Update();
         void Draw();
         // Vector2 position() { return position; }
@@ -14,6 +14,7 @@ class Player
         int resolution_scale;
         Input inputer;
         Vector2 size;
+        Vector2 screen;
         Vector2 input;
         Vector2 position;
         Vector2 velocity;
