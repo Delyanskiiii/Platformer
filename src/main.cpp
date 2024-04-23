@@ -17,7 +17,7 @@ int main()
     int diff = GetMonitorWidth(display) / 320;
     SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &diff, SHADER_UNIFORM_VEC2);
 
-    Vector2 light_strength_value = {5 * diff, 5 * diff};
+    Vector2 light_strength_value = {10 * diff, 5 * diff};
     SetShaderValue(shader, GetShaderLocation(shader, "lightStrength"), &light_strength_value, SHADER_UNIFORM_VEC2);
 
     ToggleFullscreen();

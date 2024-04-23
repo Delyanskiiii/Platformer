@@ -1,7 +1,6 @@
 #include <raylib.h>
 #include "player.h"
 #include "input.h"
-#include <iostream>
 
 Player::Player(int diff, float width, float height) {
     resolution_scale = diff;
@@ -17,7 +16,6 @@ Player::Player(int diff, float width, float height) {
 Vector2 Player::Update() {
     input = inputer.GetInput();
 
-    std::cout << position.x << " " << position.y << std::endl;
     if ((position.x < screen.x - size.x * resolution_scale && position.x > 0) || (position.x == screen.x - size.x * resolution_scale && input.x < 0) || (position.x == 0 && input.x > 0))
         position.x += input.x * velocity.x;
 
