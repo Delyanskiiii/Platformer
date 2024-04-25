@@ -6,27 +6,61 @@ in vec4 fragColor;
 uniform sampler2D ourTexture;
 uniform vec2 lightPosition;
 uniform vec2 lightStrength;
-uniform int resolution;
+uniform vec2 resolution;
 
 out vec4 finalColor;
 
 void main() {
     vec4 texColor = texture(ourTexture, fragTexCoord);
     // texColor = vec4(texColor.x - 50/255, texColor.y - 50/255, texColor.z - 50/255, texColor.a);
-    // vec2 pixelCoord = vec2(floor(fragTexCoord.x * 320 * resolution + 0.5), floor(fragTexCoord.y * 180 * resolution + 0.5));
+    vec2 pixelCoord = vec2(floor(fragTexCoord.x * resolution.x + 0.5), floor(fragTexCoord.y * resolution.y + 0.5));
 
-    // if (abs(lightPosition.x - pixelCoord.x) > abs(lightPosition.y - pixelCoord.y)) {
-    //     vec2 position = vec2(pixelCoord.x, lightPosition.x);
-    // } else {
-    //     vec2 position = vec2(pixelCoord.y, lightPosition.y);
-    // }
+    vec2 position = vec2(0, 0);
+    bool x = true;
 
-    float shoa = abs(fragTexCoord.x * 2560 - lightPosition.x);
-    // float shoa = abs(fragTexCoord.x - ((lightPosition.x / 320) / resolution));
-    // float shoa = lightStrength.x - (pow(lightPosition.x - pixelCoord.x, 2) + pow(lightPosition.y - pixelCoord.y, 2));
-    if (shoa < lightStrength.x) {
-        finalColor = vec4(texColor.x + shoa / 255, texColor.y + shoa / 255, texColor.z + shoa / 255, 1);
-        // finalColor = vec4(1,1,1,1);
+    if (abs(lightPosition.x - pixelCoord.x) > abs(lightPosition.y - pixelCoord.y)) {
+        if (pixelCoord.x < lightPosition.x) {
+            position = vec2(pixelCoord.x, lightPosition.x);
+        } else {
+            position = vec2(lightPosition.x, pixelCoord.x);
+        }
+        x = true;
+    } else {
+        if (pixelCoord.y < lightPosition.y) {
+            position = vec2(pixelCoord.y, lightPosition.y);
+        } else {
+            position = vec2(lightPosition.y, pixelCoord.y);
+        }
+        x = false;
+    }
+
+    float shoa = lightStrength.x - sqrt((pow(lightPosition.x - pixelCoord.x, 2) + pow(lightPosition.y - pixelCoord.y, 2)));
+
+    float a = (pixelCoord.y - lightPosition.y) / (pixelCoord.x - lightPosition.x);
+    float b = pixelCoord.y - a * pixelCoord.x;
+
+    if (shoa > 0 && texColor.a > 0) {
+        bool stop = false;
+        for (int i = int(position.x) + 1; i < position.y; i++) {
+            vec2 coord = vec2(0, 0);
+            if (x) {
+                coord = vec2(i / resolution.x, (i * a + b) / resolution.y);
+            } else {
+                coord = vec2((i - b) / a / resolution.x, i / resolution.y);
+            }
+
+            vec4 testColor = texture(ourTexture, coord);
+            if (testColor.a > texColor.a) {
+                stop = true;
+                break;
+            }
+        }
+
+        if (stop) {
+            finalColor = texColor;
+        } else {
+            finalColor = texColor + vec4(shoa / 255, shoa / 255, shoa / 255, 1);
+        }
     } else {
         finalColor = texColor;
     }
@@ -36,22 +70,6 @@ void main() {
     //         pixelCoord.x 
     //     }
     // }
-
-    // if (gl_FragCoord <= lightPosition + lightStrength && gl_FragCoord >= lightPosition - lightStrength) {
-
-    // }
-
-
-    // if (lightPosition.x > 2000) {
-    //     finalColor = vec4(1,1,1,1);
-    // } else {
-    //     finalColor = texColor;
-    // }
-
-    // finalColor = vec4(fragTexCoord.x, 0, 0, 1);
-    // vec2 newCoord = vec2(fragTexCoord.x + 0.1, fragTexCoord.y - 100);
-
-    // finalColor = vec4(texColor.x, texColor.y, texColor.z, texColor.alpha);
 }
 
 // void convertToInteger(in float value, out int outputValue) {

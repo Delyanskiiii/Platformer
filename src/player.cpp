@@ -7,8 +7,8 @@ Player::Player(int diff, float width, float height) {
     screen = {width, height};
     // size.x = 10;
     size = { 5, 5 };
-    position = { 0, 1360 };
-    velocity = { 8, 8 };
+    position = { 0, 0 };
+    velocity = { 1, 1 };
     inputer = Input();
     // Pair pastVelocity[100];
 }
@@ -17,10 +17,10 @@ Vector2 Player::Update() {
     input = inputer.GetInput();
 
     if ((position.x < screen.x - size.x * resolution_scale && position.x > 0) || (position.x == screen.x - size.x * resolution_scale && input.x < 0) || (position.x == 0 && input.x > 0))
-        position.x += input.x * velocity.x;
+        position.x += input.x * velocity.x * resolution_scale;
 
      if ((position.y < screen.y - size.y * resolution_scale && position.y  > 0) || (position.y == screen.y - size.y * resolution_scale && input.y < 0) || (position.y  == 0 && input.y > 0))
-        position.y += input.y * velocity.y;
+        position.y += input.y * velocity.y * resolution_scale;
 
     return position;
 }

@@ -4,20 +4,21 @@
 
 int main()
 {
+    InitWindow(0, 0, "main");
     int display = GetCurrentMonitor();
     int width = GetMonitorWidth(display);
     int height = GetMonitorHeight(display);
-    InitWindow(width, height, "main");
+    Vector2 resolution = {width, height};
 
     Color skyBlue = Color{135, 206, 235, 255};
     Texture2D texFull = LoadTexture("levels/light_test.png");
     Shader shader = LoadShader(0, TextFormat("src/shader.fs"));
     SetShaderValue(shader, GetShaderLocation(shader, "ourTexture"), &texFull, SHADER_UNIFORM_VEC2);
 
-    int diff = GetMonitorWidth(display) / 320;
-    SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &diff, SHADER_UNIFORM_VEC2);
+    int diff = width / 320;
+    SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &resolution, SHADER_UNIFORM_VEC2);
 
-    Vector2 light_strength_value = {10 * diff, 5 * diff};
+    Vector2 light_strength_value = {200, 5 * diff};
     SetShaderValue(shader, GetShaderLocation(shader, "lightStrength"), &light_strength_value, SHADER_UNIFORM_VEC2);
 
     ToggleFullscreen();
@@ -31,7 +32,6 @@ int main()
     {
         Vector2 player_position = world.Update();
         SetShaderValue(shader, loc_index, &player_position, SHADER_UNIFORM_VEC2);
-
         BeginDrawing();
         ClearBackground(skyBlue);
         DrawFPS(2480, 0);
