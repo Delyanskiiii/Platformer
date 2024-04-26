@@ -22,7 +22,7 @@ struct Position {
 
 class World {
     public:
-        World(int diff);
+        World(int width, int height);
         Vector2 Update();
         void Draw();
         // ~World() { delete[] blocks; }
@@ -30,7 +30,6 @@ class World {
     private:
         std::vector<Block> blocks;
         std::vector<Position> block_positions;
-        int resolution_scale;
         Texture2D texFull;
-        Player player = Player(1, 1, 1);
+        Player player = Player(1, 1);
 };

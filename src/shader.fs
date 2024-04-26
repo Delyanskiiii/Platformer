@@ -12,7 +12,6 @@ out vec4 finalColor;
 
 void main() {
     vec4 texColor = texture(ourTexture, fragTexCoord);
-    // texColor = vec4(texColor.x - 50/255, texColor.y - 50/255, texColor.z - 50/255, texColor.a);
     vec2 pixelCoord = vec2(floor(fragTexCoord.x * resolution.x + 0.5), floor(fragTexCoord.y * resolution.y + 0.5));
 
     vec2 position = vec2(0, 0);
@@ -46,6 +45,9 @@ void main() {
             if (x) {
                 coord = vec2(i / resolution.x, (i * a + b) / resolution.y);
             } else {
+                if (a == 0) {
+                    a = 1;
+                }
                 coord = vec2((i - b) / a / resolution.x, i / resolution.y);
             }
 
@@ -64,26 +66,4 @@ void main() {
     } else {
         finalColor = texColor;
     }
-    // finalColor = texColor;
-    // for (int i = -1; i <= 1; i++) {
-    //     for (int j = -1; j <= 1; j++) {
-    //         pixelCoord.x 
-    //     }
-    // }
 }
-
-// void convertToInteger(in float value, out int outputValue) {
-//     outputValue = floor(value + 0.5);
-// }
-
-// float convertToInteger(float value) {
-//     return floor(value + 0.5);
-// }
-
-// float convertToFloat(int value, bool width) {
-//     if (width) {
-//         return value / (resolution * 320);
-//     } else {
-//         return value / (resolution * 180);
-//     }
-// }

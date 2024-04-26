@@ -7,9 +7,8 @@
 #include <algorithm>
 #include "player.h"
 
-World::World(int diff) {
-    resolution_scale = diff;
-    player = Player(resolution_scale, GetScreenWidth(), GetScreenHeight());
+World::World(int width, int height) {
+    player = Player(width, height);
     texFull = LoadTexture("levels/light_test.png");
 
     std::ifstream level_file("levels/level_1.txt");
@@ -36,7 +35,9 @@ Vector2 World::Update() {
 }
 
 void World::Draw() {
-    DrawTextureEx(texFull, {0, 0}, 0, resolution_scale, WHITE);
+    DrawTextureEx(texFull, {0, 0}, 0, 1, WHITE);
+    // DrawTexture(texFull, );
+    // DrawTextureEx(texFull, {0, 0}, 0, resolution_scale, WHITE);
     // for (const auto& block_position : block_positions) {
     //     DrawTextureEx(texFull, {block_position.x * resolution_scale * 5, block_position.y * resolution_scale * 5}, 0, resolution_scale, WHITE);
     // }

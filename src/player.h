@@ -5,7 +5,7 @@
 class Player
 {
     public:
-        Player(int diff, float width, float height);
+        Player(int width, int height);
         Vector2 Update();
         void Draw();
         // Vector2 position() { return position; }
