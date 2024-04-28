@@ -9,24 +9,7 @@
 
 World::World(int width, int height) {
     player = Player(width, height);
-    texFull = LoadTexture("levels/light_test.png");
-
-    std::ifstream level_file("levels/level_1.txt");
-
-    if (level_file.is_open()) {
-        std::string line;
-        while (std::getline(level_file, line)) {
-            std::istringstream iss(line);
-            Position loaded_position;
-
-            if (!(iss >> loaded_position.x >> loaded_position.y >> loaded_position.block_index)) {
-                break;
-            }
-
-            block_positions.push_back(loaded_position);
-        }
-        level_file.close();
-    }
+    texFull = LoadTexture("levels/shader_test.png");
 }
 
 Vector2 World::Update() {
@@ -41,5 +24,5 @@ void World::Draw() {
     // for (const auto& block_position : block_positions) {
     //     DrawTextureEx(texFull, {block_position.x * resolution_scale * 5, block_position.y * resolution_scale * 5}, 0, resolution_scale, WHITE);
     // }
-    player.Draw();
+    // player.Draw();
 }

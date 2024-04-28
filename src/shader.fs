@@ -11,7 +11,15 @@ uniform vec2 resolution;
 out vec4 finalColor;
 
 void main() {
+    //Get color from texture
     vec4 texColor = texture(ourTexture, fragTexCoord);
+
+    //Skip pixel if it's not on the level layer
+    if (texColor.a == 0) {
+        discard;
+    }
+
+    //Set pixel coordinates from 1/1 to 320/180
     vec2 pixelCoord = vec2(floor(fragTexCoord.x * resolution.x + 0.5), floor(fragTexCoord.y * resolution.y + 0.5));
 
     vec2 position = vec2(0, 0);
@@ -33,22 +41,26 @@ void main() {
         x = false;
     }
 
-    float shoa = lightStrength.x - sqrt((pow(lightPosition.x - pixelCoord.x, 2) + pow(lightPosition.y - pixelCoord.y, 2)));
+    float shoa = int(lightStrength.x - sqrt((pow(lightPosition.x - pixelCoord.x, 2) + pow(lightPosition.y - pixelCoord.y, 2))));
 
-    float a = (pixelCoord.y - lightPosition.y) / (pixelCoord.x - lightPosition.x);
+    float a = 0;
+    if (pixelCoord.x - lightPosition.x != 0) {
+        a = (pixelCoord.y - lightPosition.y) / (pixelCoord.x - lightPosition.x);
+    }
     float b = pixelCoord.y - a * pixelCoord.x;
 
-    if (shoa > 0 && texColor.a > 0) {
+    if (shoa > 0) {
         bool stop = false;
         for (int i = int(position.x) + 1; i < position.y; i++) {
             vec2 coord = vec2(0, 0);
             if (x) {
-                coord = vec2(i / resolution.x, (i * a + b) / resolution.y);
+                coord = vec2(i / resolution.x, floor(i * a + b + 0.5) / resolution.y);
             } else {
                 if (a == 0) {
-                    a = 1;
+                    coord = vec2(pixelCoord.x, i / resolution.y);
+                } else {
+                    coord = vec2(floor((i - b) / a + 0.5) / resolution.x, i / resolution.y);
                 }
-                coord = vec2((i - b) / a / resolution.x, i / resolution.y);
             }
 
             vec4 testColor = texture(ourTexture, coord);
@@ -59,11 +71,11 @@ void main() {
         }
 
         if (stop) {
-            finalColor = texColor;
+            finalColor = vec4(texColor.x, texColor.y, texColor.z, 1);
         } else {
             finalColor = texColor + vec4(shoa / 255, shoa / 255, shoa / 255, 1);
         }
     } else {
-        finalColor = texColor;
+        finalColor = vec4(texColor.x, texColor.y, texColor.z, 1);
     }
 }

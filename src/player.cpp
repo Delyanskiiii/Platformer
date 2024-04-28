@@ -25,6 +25,5 @@ Vector2 Player::Update() {
 }
 
 void Player::Draw() {
-    // DrawRectangle(position.x, position.y, size.x * resolution_scale, size.y * resolution_scale, WHITE);
-    DrawRectangle(position.x, position.y, size.x * 1, size.y * 1, WHITE);
+    DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
 }

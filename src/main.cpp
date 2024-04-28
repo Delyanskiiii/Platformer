@@ -15,14 +15,16 @@ int main()
     Vector2 resolution = {targetWidth, targetHeight};
 
     Color skyBlue = Color{135, 206, 235, 255};
-    Texture2D texFull = LoadTexture("levels/light_test.png");
-    Shader shader = LoadShader(0, TextFormat("src/shader.fs"));
+    Texture2D texFull = LoadTexture("levels/shader_test.png");
+    // Shader shader = LoadShader(0, TextFormat("src/shader.fs"));
+    Shader shader = LoadShader(0, TextFormat("src/lights.fs"));
     SetShaderValue(shader, GetShaderLocation(shader, "ourTexture"), &texFull, SHADER_UNIFORM_VEC2);
 
     SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &resolution, SHADER_UNIFORM_VEC2);
 
-    Vector2 light_strength_value = {100, 5};
-    SetShaderValue(shader, GetShaderLocation(shader, "lightStrength"), &light_strength_value, SHADER_UNIFORM_VEC2);
+    Vector2 light_props = {5, 100};
+    // SetShaderValue(shader, GetShaderLocation(shader, "lightStrengt"), &light_strength_value, SHADER_UNIFORM_VEC2);
+    SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
 
     RenderTexture2D target = LoadRenderTexture(targetWidth, targetHeight);
 
@@ -31,7 +33,7 @@ int main()
     SetTargetFPS(100);
 
     World world = World(targetWidth, targetHeight);
-    int loc_index = GetShaderLocation(shader, "lightPosition");
+    int loc_index = GetShaderLocation(shader, "lightSource");
 
     while (!WindowShouldClose())
     {
