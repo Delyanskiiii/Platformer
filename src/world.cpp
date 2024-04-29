@@ -24,5 +24,5 @@ void World::Draw() {
     // for (const auto& block_position : block_positions) {
     //     DrawTextureEx(texFull, {block_position.x * resolution_scale * 5, block_position.y * resolution_scale * 5}, 0, resolution_scale, WHITE);
     // }
-    // player.Draw();
+    player.Draw();
 }

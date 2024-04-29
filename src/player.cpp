@@ -5,7 +5,7 @@
 Player::Player(int width, int height) {
     screen = {width, height};
     // size.x = 10;
-    size = { 5, 5 };
+    size = { 1, 1 };
     position = { 0, 0 };
     velocity = { 1, 1 };
     inputer = Input();
