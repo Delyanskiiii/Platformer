@@ -10,11 +10,17 @@ uniform vec2 resolution;
 
 out vec4 finalColor;
 
+float roundToThirdDecimal(float value) {
+    return floor(value * 100) / 100;
+}
+
 vec3 CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixelCoord, vec3 colorVariance) {
     // if (abs(lightPixelCoord.x - currentPixelCoord.x) < 1 / resolution.x && abs(lightPixelCoord.y - currentPixelCoord.y) < 1 / resolution.y) {
     //     colorVariance = vec3(1, 1, 1);
     // } else 
-    if (floor(abs(lightPixelCoord.x * resolution.x - currentPixelCoord.x * resolution.x) + 0.5) >= floor(abs(lightPixelCoord.y * resolution.y - currentPixelCoord.y * resolution.y) + 0.5)) {
+    // if (floor(abs(lightPixelCoord.x * resolution.x - currentPixelCoord.x * resolution.x) + 0.5) == floor(abs(lightPixelCoord.y * resolution.y - currentPixelCoord.y * resolution.y) + 0.5)) {
+    // if (abs(lightPixelCoord.x - currentPixelCoord.x) * resolution.x == abs(lightPixelCoord.y - currentPixelCoord.y) * resolution.y) {
+    if (roundToThirdDecimal(abs(lightPixelCoord.x - currentPixelCoord.x) * 16) > roundToThirdDecimal(abs(lightPixelCoord.y - currentPixelCoord.y) * 9)) {
         float a = (currentPixelCoord.y - lightPixelCoord.y) / (currentPixelCoord.x - lightPixelCoord.x);
         float b = currentPixelCoord.y - a * currentPixelCoord.x;
 
@@ -33,7 +39,7 @@ vec3 CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixel
                 vec2 coord = vec2(i, i * a + b);
                 vec4 testColor = texture(ourTexture, coord);
                 if (testColor.a > alpha) {
-                    stop = true;
+                    stop = false;
                     break;
                 }
             }
@@ -62,13 +68,12 @@ void main() {
     //Set pixel coordinates in correct resolution 320/180
     // vec2 pixelCoord = vec2(floor(fragTexCoord.x * resolution.x + 0.5), floor(fragTexCoord.y * resolution.y + 0.5));
     vec2 lightCoord = vec2(lightSource.x / resolution.x, lightSource.y / resolution.y);
-    vec2 pixelCoord = vec2(floor(fragTexCoord.x * resolution.x + 0.5), floor(fragTexCoord.y * resolution.y + 0.5));
     vec3 colorVariance = vec3(0, 0, 0);
     
     // if (lightProps.y  - floor(sqrt((pow(lightCoord.x - fragTexCoord.x, 2) + pow(lightCoord.y - fragTexCoord.y, 2))) + 0.5) > 0) {
     //     colorVariance = CalculateColorVariance(texColor.a, lightSource, pixelCoord, colorVariance);
     // }
-    colorVariance = CalculateColorVariance(texColor.a, lightSource, pixelCoord, colorVariance);
+    colorVariance = CalculateColorVariance(texColor.a, lightCoord, fragTexCoord, colorVariance);
 
     finalColor = vec4(texColor.x + colorVariance.x, texColor.y + colorVariance.y, texColor.z + colorVariance.z, 1);
 }

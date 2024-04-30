@@ -30,7 +30,7 @@ int main()
 
     ToggleFullscreen();
     HideCursor();
-    SetTargetFPS(10);
+    SetTargetFPS(100);
 
     World world = World(targetWidth, targetHeight);
     int loc_index = GetShaderLocation(shader, "lightSource");
@@ -50,7 +50,7 @@ int main()
 
         BeginDrawing();
             ClearBackground(skyBlue);
-            DrawTexturePro(target.texture, (Rectangle){0, 0, 320, -180}, (Rectangle){0, 0, displayWidth, displayHeight}, (Vector2){0, 0}, 0.0f, WHITE);
+            DrawTexturePro(target.texture, (Rectangle){0, 0, targetWidth, -targetHeight}, (Rectangle){0, 0, displayWidth, displayHeight}, (Vector2){0, 0}, 0.0f, WHITE);
             DrawFPS(2480, 0);
         EndDrawing();
     }
