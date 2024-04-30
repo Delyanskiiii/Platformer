@@ -30,7 +30,7 @@ int main()
 
     ToggleFullscreen();
     HideCursor();
-    SetTargetFPS(100);
+    SetTargetFPS(10);
 
     World world = World(targetWidth, targetHeight);
     int loc_index = GetShaderLocation(shader, "lightSource");
