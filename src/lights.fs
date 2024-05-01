@@ -118,11 +118,9 @@ void main() {
     // vec2 lightCoord = vec2((lightSource.x) / resolution.x, (lightSource.y) / resolution.y);
     vec2 lightCoord = vec2(lightSource.x + 0.5, lightSource.y + 0.5);
     
-    // if (lightProps.y  - floor(sqrt((pow(lightCoord.x - fragTexCoord.x, 2) + pow(lightCoord.y - fragTexCoord.y, 2))) + 0.5) > 0) {
-    //     colorVariance = CalculateColorVariance(texColor.a, lightSource, pixelCoord, colorVariance);
-    // }
-    if (CalculateColorVariance(texColor.a, lightCoord, pos)) {
-        finalColor = vec4(texColor.x + 0.5, texColor.y + 0.5, texColor.z + 0.5, 1);
+    float variance = lightProps.y - floor(sqrt((pow(lightCoord.x - pos.x, 2) + pow(lightCoord.y - pos.y, 2))) + 0.5);
+    if (variance > 0 && CalculateColorVariance(texColor.a, lightCoord, pos)) {
+        finalColor = vec4(texColor.x + variance / 255, texColor.y + variance / 255, texColor.z + variance / 255, 1);
     } else {
         finalColor = vec4(texColor.xyz, 1);
     }
