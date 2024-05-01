@@ -10,47 +10,76 @@ uniform vec2 resolution;
 
 out vec4 finalColor;
 
-float roundToSecondDecimal(float value) {
-    return floor(value * 100) / 100;
-}
-
 bool CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixelCoord) {
-    // if (roundToSecondDecimal(abs(lightPixelCoord.x - currentPixelCoord.x) * 16) > roundToSecondDecimal(abs(lightPixelCoord.y - currentPixelCoord.y) * 9)) {
-    if (abs(lightPixelCoord.x - currentPixelCoord.x) > abs(lightPixelCoord.y - currentPixelCoord.y)) {
+    if (abs(lightPixelCoord.x - currentPixelCoord.x) <= 1 && abs(lightPixelCoord.y - currentPixelCoord.y) <= 1) {
+        return false;
+    } else if (abs(lightPixelCoord.x - currentPixelCoord.x) > abs(lightPixelCoord.y - currentPixelCoord.y)) {
         float a = (currentPixelCoord.y - lightPixelCoord.y) / (currentPixelCoord.x - lightPixelCoord.x);
         float b = currentPixelCoord.y - a * currentPixelCoord.x;
 
         if (lightPixelCoord.x > currentPixelCoord.x) {
             for (float i = currentPixelCoord.x + 1; i < lightPixelCoord.x; i += 1) {
                 vec4 currentColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b) / resolution.y));
-                // vec4 currentColor = texelFetch(ourTexture, ivec2(vec2(i, i * a + b)), 0);
-
-                // vec4 leftColor = texture(ourTexture, vec2(i - 1 / resolution.x, i * a + b));
-                // vec4 leftColor = texelFetch(ourTexture, ivec2(vec2(i - 1, i * a + b)), 0);
-
-                // vec4 upColor = texture(ourTexture, vec2(i, i * a + b + 1 / resolution.y));
-                // vec4 upColor = texelFetch(ourTexture, ivec2(vec2(i, i * a + b + 1)), 0);
-
-                // vec4 downColor = texture(ourTexture, vec2(i, i * a + b - 1 / resolution.y));
-                // vec4 downColor = texelFetch(ourTexture, ivec2(vec2(i, i * a + b - 1)), 0);
-
-                // if (currentColor.a > alpha || (leftColor.a > alpha && (upColor.a > alpha || downColor.a > alpha))) {
-                if (currentColor.a > alpha) {
+                vec4 leftColor = texture(ourTexture, vec2((i - 1) / resolution.x, (i * a + b) / resolution.y));
+                vec4 upColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b + 1) / resolution.y));
+                vec4 downColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b - 1) / resolution.y));
+                if (currentColor.a > alpha || (leftColor.a > alpha && (upColor.a > alpha || downColor.a > alpha))) {
                     return false;
                 }
             }
         } else {
-            // for (float i = currentPixelCoord.x - (1 / resolution.x); i > lightPixelCoord.x; i -= (1 / resolution.x)) {
-            //     vec4 currentColor = texture(ourTexture, vec2(i, i * a + b));
-            //     vec4 rightColor = texture(ourTexture, vec2(i + 1 / resolution.x, i * a + b));
-            //     vec4 upColor = texture(ourTexture, vec2(i, i * a + b + 1 / resolution.y));
-            //     vec4 downColor = texture(ourTexture, vec2(i, i * a + b - 1 / resolution.y));
-            //     if (currentColor.a > alpha || (rightColor.a > alpha && (upColor.a > alpha || downColor.a > alpha))) {
-            //         return false;
-            //     }
-            // }
-            return false;
+            for (float i = currentPixelCoord.x - 1; i > lightPixelCoord.x; i -= 1) {
+                vec4 currentColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b) / resolution.y));
+                vec4 rightColor = texture(ourTexture, vec2((i + 1) / resolution.x, (i * a + b) / resolution.y));
+                vec4 upColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b + 1) / resolution.y));
+                vec4 downColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b - 1) / resolution.y));
+                if (currentColor.a > alpha || (rightColor.a > alpha && (upColor.a > alpha || downColor.a > alpha))) {
+                    return false;
+                }
+            }
         }
+    // }
+    // if (abs(lightPixelCoord.x - currentPixelCoord.x) > abs(lightPixelCoord.y - currentPixelCoord.y)) {
+    //     float a = (currentPixelCoord.y - lightPixelCoord.y) / (currentPixelCoord.x - lightPixelCoord.x);
+    //     float b = currentPixelCoord.y - a * currentPixelCoord.x;
+
+    //     vec2 holocaust;
+    //     vec2 direction;
+    //     if (lightPixelCoord.x > currentPixelCoord.x) {
+    //         holocaust = vec2(currentPixelCoord.x, lightPixelCoord.x);
+    //         direction = vec2(1, 0);
+    //     } else {
+    //         holocaust = vec2(lightPixelCoord.x, currentPixelCoord.x);
+    //         direction = vec2(-1, 0);
+    //     }
+
+    //     if (b < a + b) {
+    //         direction = vec2(direction.x, 1);
+    //     } else {
+    //         direction = vec2(direction.x, -1);
+    //     }
+
+    //     for (float i = holocaust.x + 1; i < holocaust.y; i++) {
+    //         vec4 currentColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b) / resolution.y));
+
+    //         vec4 horColor;
+    //         if (direction.x > 0) {
+    //             vec4 horColor = texture(ourTexture, vec2((i - 1) / resolution.x, (i * a + b) / resolution.y));
+    //         } else {
+    //             vec4 horColor = texture(ourTexture, vec2((i + 1) / resolution.x, (i * a + b) / resolution.y));
+    //         }
+
+    //         vec4 verColor;
+    //         if (direction.y > 0) {
+    //             vec4 verColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b - 1) / resolution.y));
+    //         } else {
+    //             vec4 verColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b + 1) / resolution.y));
+    //         }
+
+    //         if (currentColor.a > alpha || (horColor.a > alpha && verColor.a > alpha)) {
+    //             return false;
+    //         }
+    //     }
     } else {
         // float a = 0;
         // if (currentPixelCoord.x != lightPixelCoord.x) {
@@ -98,12 +127,12 @@ void main() {
     
     // vec2 pixelCoord = vec2(floor(fragTexCoord.x * resolution.x + 0.5), floor(fragTexCoord.y * resolution.y + 0.5));
     // vec2 lightCoord = vec2((lightSource.x) / resolution.x, (lightSource.y) / resolution.y);
-    vec2 lightCoord = normalize(lightSource);
+    vec2 lightCoord = vec2(lightSource.x + 0.5, lightSource.y + 0.5);
     
     // if (lightProps.y  - floor(sqrt((pow(lightCoord.x - fragTexCoord.x, 2) + pow(lightCoord.y - fragTexCoord.y, 2))) + 0.5) > 0) {
     //     colorVariance = CalculateColorVariance(texColor.a, lightSource, pixelCoord, colorVariance);
     // }
-    if (CalculateColorVariance(texColor.a, lightSource, pos)) {
+    if (CalculateColorVariance(texColor.a, lightCoord, pos)) {
         finalColor = vec4(texColor.x + 0.5, texColor.y + 0.5, texColor.z + 0.5, 1);
     } else {
         finalColor = vec4(texColor.xyz, 1);
