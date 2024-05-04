@@ -10,7 +10,12 @@ uniform vec2 resolution;
 
 out vec4 finalColor;
 
-bool CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixelCoord) {
+float Circle(vec2 var1, vec2 var2) {
+    return floor(sqrt((pow(var1.x - var2.x, 2) + pow(var1.y - var2.y, 2))) + 0.5);
+}
+
+float CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixelCoord) {
+    float variance = 0;
     if (abs(lightPixelCoord.x - currentPixelCoord.x) > abs(lightPixelCoord.y - currentPixelCoord.y)) {
         float a = (currentPixelCoord.y - lightPixelCoord.y) / (currentPixelCoord.x - lightPixelCoord.x);
         float b = currentPixelCoord.y - a * currentPixelCoord.x;
@@ -25,8 +30,13 @@ bool CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixel
                 } else {
                     verColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b + 1) / resolution.y));
                 }
-                if (currentColor.a > alpha || (leftColor.a > alpha && verColor.a > alpha)) {
-                    return false;
+                if (currentColor.a > alpha) {
+                    variance += Circle(vec2(i, i * a + b), currentPixelCoord) - currentColor.a + alpha;
+                } else if (leftColor.a > alpha && verColor.a > alpha) {
+                    variance += Circle(vec2(i, i * a + b), currentPixelCoord) - leftColor.a + alpha;
+                }
+                if (variance >= 10) {
+                    return variance;
                 }
             }
         } else {
@@ -39,8 +49,13 @@ bool CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixel
                 } else {
                     verColor = texture(ourTexture, vec2(i / resolution.x, (i * a + b - 1) / resolution.y));
                 }
-                if (currentColor.a > alpha || (rightColor.a > alpha && verColor.a > alpha)) {
-                    return false;
+                if (currentColor.a > alpha) {
+                    variance += Circle(currentPixelCoord, vec2(i, i * a + b)) - currentColor.a + alpha;
+                } else if (rightColor.a > alpha && verColor.a > alpha) {
+                    variance += Circle(currentPixelCoord, vec2(i, i * a + b)) - rightColor.a + alpha;
+                }
+                if (variance >= 10) {
+                    return variance;
                 }
             }
         }
@@ -62,8 +77,13 @@ bool CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixel
                     } else {
                         horColor = texture(ourTexture, vec2(((i - b) / a + 1) / resolution.x, i / resolution.y));
                     }
-                    if (currentColor.a > alpha || (downColor.a > alpha && horColor.a > alpha)) {
-                        return false;
+                    if (currentColor.a > alpha) {
+                        variance += Circle(currentPixelCoord, vec2((i - b) / a, i)) - currentColor.a + alpha;
+                    } else if ((downColor.a > alpha && horColor.a > alpha)) {
+                        variance += Circle(currentPixelCoord, vec2((i - b) / a, i)) - downColor.a + alpha;
+                    }
+                    if (variance >= 10) {
+                        return variance;
                     }
                 }
             } else {
@@ -76,8 +96,13 @@ bool CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixel
                     } else {
                         horColor = texture(ourTexture, vec2(((i - b) / a - 1) / resolution.x, i / resolution.y));
                     }
-                    if (currentColor.a > alpha || (upColor.a > alpha && horColor.a > alpha)) {
-                        return false;
+                    if (currentColor.a > alpha) {
+                        variance += Circle(currentPixelCoord, vec2((i - b) / a, i)) - currentColor.a + alpha;
+                    } else if ((upColor.a > alpha && horColor.a > alpha)) {
+                        variance += Circle(currentPixelCoord, vec2((i - b) / a, i)) - upColor.a + alpha;
+                    }
+                    if (variance >= 10) {
+                        return variance;
                     }
                 }
             }
@@ -86,20 +111,26 @@ bool CalculateColorVariance(float alpha, vec2 lightPixelCoord, vec2 currentPixel
                 for (float i = currentPixelCoord.y + 1; i <= lightPixelCoord.y; i += 1) {
                     vec4 currentColor = texture(ourTexture, vec2(lightPixelCoord.x / resolution.x, i / resolution.y));
                     if (currentColor.a > alpha) {
-                        return false;
+                        variance += Circle(currentPixelCoord, vec2(lightPixelCoord.x, i)) - currentColor.a + alpha;
+                    }
+                    if (variance >= 10) {
+                        return variance;
                     }
                 }
             } else {
                 for (float i = currentPixelCoord.y - 1; i >= lightPixelCoord.y; i -= 1) {
                     vec4 currentColor = texture(ourTexture, vec2(lightPixelCoord.x / resolution.x, i / resolution.y));
                     if (currentColor.a > alpha) {
-                        return false;
+                        variance += Circle(currentPixelCoord, vec2(lightPixelCoord.x, i)) - currentColor.a + alpha;
+                    }
+                    if (variance >= 10) {
+                        return variance;
                     }
                 }
             }
         }
     }
-    return true;
+    return variance;
 }
 
 void main() {
@@ -113,14 +144,14 @@ void main() {
 
     //Set pixel coordinates in correct resolution 320/180
     vec2 pos = vec2(gl_FragCoord.x, resolution.y - gl_FragCoord.y);
-    
-    // vec2 pixelCoord = vec2(floor(fragTexCoord.x * resolution.x + 0.5), floor(fragTexCoord.y * resolution.y + 0.5));
-    // vec2 lightCoord = vec2((lightSource.x) / resolution.x, (lightSource.y) / resolution.y);
     vec2 lightCoord = vec2(lightSource.x + 0.5, lightSource.y + 0.5);
     
-    float variance = lightProps.y - floor(sqrt((pow(lightCoord.x - pos.x, 2) + pow(lightCoord.y - pos.y, 2))) + 0.5);
-    if (variance > 0 && CalculateColorVariance(texColor.a, lightCoord, pos)) {
-        finalColor = vec4(texColor.x + variance / 255, texColor.y + variance / 255, texColor.z + variance / 255, 1);
+    float circle = lightProps.y - Circle(lightCoord, pos);
+    float variance = CalculateColorVariance(texColor.a, lightCoord, pos);
+
+    if (circle > 0 && variance < 10 && variance >= 0) {
+        variance = (circle - variance) / 500;
+        finalColor = vec4(texColor.x + variance, texColor.y + variance, texColor.z + variance, 1);
     } else {
         finalColor = vec4(texColor.xyz, 1);
     }
