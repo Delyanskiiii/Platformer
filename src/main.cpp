@@ -15,7 +15,7 @@ int main()
     Vector2 resolution = {targetWidth, targetHeight};
 
     Color skyBlue = Color{135, 206, 235, 255};
-    Texture2D texFull = LoadTexture("levels/test.png");
+    Texture2D texFull = LoadTexture("levels/shader_test.png");
     // Shader shader = LoadShader(0, TextFormat("src/shader.fs"));
     Shader shader = LoadShader(0, TextFormat("src/lights.fs"));
     SetShaderValue(shader, GetShaderLocation(shader, "ourTexture"), &texFull, SHADER_UNIFORM_VEC2);
@@ -30,7 +30,7 @@ int main()
 
     ToggleFullscreen();
     HideCursor();
-    SetTargetFPS(50);
+    SetTargetFPS(100);
 
     World world = World(targetWidth, targetHeight);
     int loc_index = GetShaderLocation(shader, "lightSource");

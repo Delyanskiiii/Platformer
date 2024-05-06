@@ -9,7 +9,7 @@
 
 World::World(int width, int height) {
     player = Player(width, height);
-    texFull = LoadTexture("levels/test.png");
+    texFull = LoadTexture("levels/shader_test.png");
 }
 
 Vector2 World::Update() {
