@@ -15,15 +15,13 @@ int main()
     Vector2 resolution = {targetWidth, targetHeight};
 
     Color skyBlue = Color{135, 206, 235, 255};
-    Texture2D texFull = LoadTexture("levels/shader_test.png");
-    // Shader shader = LoadShader(0, TextFormat("src/shader.fs"));
+    Texture2D texFull = LoadTexture("texture.png");
     Shader shader = LoadShader(0, TextFormat("src/lights.fs"));
     SetShaderValue(shader, GetShaderLocation(shader, "ourTexture"), &texFull, SHADER_UNIFORM_VEC2);
 
     SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &resolution, SHADER_UNIFORM_VEC2);
 
     Vector2 light_props = {5, 100};
-    // SetShaderValue(shader, GetShaderLocation(shader, "lightStrengt"), &light_strength_value, SHADER_UNIFORM_VEC2);
     SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
 
     RenderTexture2D target = LoadRenderTexture(targetWidth, targetHeight);
