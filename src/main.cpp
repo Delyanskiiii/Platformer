@@ -24,6 +24,10 @@ int main()
     Vector2 light_props = {5, 100};
     SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
 
+    int active_index = GetShaderLocation(shader, "active");
+    Vector2 active = {1, 0};
+    SetShaderValue(shader, active_index, &active, SHADER_UNIFORM_VEC2);
+
     RenderTexture2D target = LoadRenderTexture(targetWidth, targetHeight);
 
     ToggleFullscreen();
@@ -31,12 +35,18 @@ int main()
     SetTargetFPS(100);
 
     World world = World(targetWidth, targetHeight);
-    int loc_index = GetShaderLocation(shader, "lightSource");
+    int lightSource_index = GetShaderLocation(shader, "lightSource");
 
     while (!WindowShouldClose())
     {
         Vector2 player_position = world.Update();
-        SetShaderValue(shader, loc_index, &player_position, SHADER_UNIFORM_VEC2);
+        SetShaderValue(shader, lightSource_index, &player_position, SHADER_UNIFORM_VEC2);
+        if (IsKeyPressed(KEY_S)) {
+            float shoa = active.x;
+            active.x = active.y;
+            active.y = shoa;
+            SetShaderValue(shader, active_index, &active, SHADER_UNIFORM_VEC2);
+        }
 
         BeginTextureMode(target);
             ClearBackground(skyBlue);
@@ -49,7 +59,7 @@ int main()
         BeginDrawing();
             ClearBackground(skyBlue);
             DrawTexturePro(target.texture, (Rectangle){0, 0, targetWidth, -targetHeight}, (Rectangle){0, 0, displayWidth, displayHeight}, (Vector2){0, 0}, 0.0f, WHITE);
-            DrawFPS(2480, 0);
+            DrawFPS(displayWidth - 80, 0);
         EndDrawing();
     }
     UnloadShader(shader);
