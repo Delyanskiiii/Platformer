@@ -24,7 +24,7 @@
 .PHONY: all clean
 
 # Define required raylib variables
-PROJECT_NAME       ?= game
+PROJECT_NAME       ?= Platformer
 RAYLIB_VERSION     ?= 5.0.0
 RAYLIB_PATH        ?= ..\..
 
