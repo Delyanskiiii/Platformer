@@ -16,15 +16,15 @@ This project is a precision platformer game built in C++ using the Raylib librar
 
 **Getting Started:**
 
-   - Install the [Raylib](https://github.com/raysan5/raylib) library.
+- Install the [Raylib](https://github.com/raysan5/raylib) library.
    
-   - Clone the [Repository](https://github.com/Delyanskiiii/Platformer).
+- Clone the [Repository](https://github.com/Delyanskiiii/Platformer)
 
-   ```bash
-   git clone https://github.com/Delyanskiiii/Platformer
-   ```
+    ```bash
+    git clone https://github.com/Delyanskiiii/Bernard
+    ```
 
-    - Build and run the game by opening the project in VS Code and compiling.
+- Build and run the game by opening the project in VS Code and compiling.
 
 **Disclaimer:**
 
