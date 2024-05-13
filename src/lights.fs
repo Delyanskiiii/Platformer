@@ -12,10 +12,18 @@ uniform vec2 active;
 out vec4 finalColor;
 
 float Circle(vec2 var1, vec2 var2) {
-    return floor(sqrt((pow(var1.x - var2.x, 2) + pow(var1.y - var2.y, 2))) + 0.5);
+    if (abs(var1.x - var2.x) > abs(var1.y - var2.y)) {
+        return abs(var1.y - var2.y);
+    } else {
+        return abs(var1.x - var2.x);
+    }
+    // return floor(sqrt((pow(var1.x - var2.x, 2) + pow(var1.y - var2.y, 2))) + 0.5);
 }
 
 float Shadow(float circle, float alpha) {
+    if (alpha < 0.01) {
+        return 100;
+    }
     if (alpha >= 0.25) {
         return 25;
     } else if (circle > alpha * 100) {
@@ -25,10 +33,19 @@ float Shadow(float circle, float alpha) {
     }
 }
 
-// float ShadowStrength(float currentPixelAlpha, vec2 lightPixelCoord, vec2 currentPixelCoord) {
-//     float strength = 0;
-//     return strength;
-// }
+float ShadowStrength(float rootPixelAlpha, vec2 lightPixelCoord, vec2 rootPixelCoord) {
+    float strength = 0;
+    float a = (rootPixelCoord.y - lightPixelCoord.y) / (rootPixelCoord.x - lightPixelCoord.x);
+    float b = rootPixelCoord.y - a * rootPixelCoord.x;
+    vec2 currentPixelCoord;
+
+    if (abs(lightPixelCoord.x - rootPixelCoord.x) > abs(lightPixelCoord.y - rootPixelCoord.y)) {
+        
+    }
+
+
+    return strength;
+}
 
 float CalculateShadowStrength(float alpha, vec2 lightPixelCoord, vec2 currentPixelCoord) {
     float variance = 0;
@@ -52,7 +69,8 @@ float CalculateShadowStrength(float alpha, vec2 lightPixelCoord, vec2 currentPix
                     if (var > variance) {
                         variance = var;
                     }
-                } else if (leftColor.a > alpha && verColor.a > alpha) {
+                }
+                if (leftColor.a > alpha && verColor.a > alpha) {
                     var = Shadow(Circle(vec2(i, i * a + b), currentPixelCoord), leftColor.a - alpha);
                     if (var > variance) {
                         variance = var;
@@ -74,7 +92,8 @@ float CalculateShadowStrength(float alpha, vec2 lightPixelCoord, vec2 currentPix
                     if (var > variance) {
                         variance = var;
                     }
-                } else if (rightColor.a > alpha && verColor.a > alpha) {
+                }
+                if (rightColor.a > alpha && verColor.a > alpha) {
                     var = Shadow(Circle(vec2(i, i * a + b), currentPixelCoord), rightColor.a - alpha);
                     if (var > variance) {
                         variance = var;
@@ -106,7 +125,8 @@ float CalculateShadowStrength(float alpha, vec2 lightPixelCoord, vec2 currentPix
                         if (var > variance) {
                             variance = var;
                         }
-                    } else if ((downColor.a > alpha && horColor.a > alpha)) {
+                    } 
+                    if ((downColor.a > alpha && horColor.a > alpha)) {
                         var = Shadow(Circle(vec2((i - b) / a, i), currentPixelCoord), downColor.a - alpha);
                         if (var > variance) {
                             variance = var;
@@ -128,7 +148,8 @@ float CalculateShadowStrength(float alpha, vec2 lightPixelCoord, vec2 currentPix
                         if (var > variance) {
                             variance = var;
                         }
-                    } else if ((upColor.a > alpha && horColor.a > alpha)) {
+                    } 
+                    if ((upColor.a > alpha && horColor.a > alpha)) {
                         var = Shadow(Circle(vec2((i - b) / a, i), currentPixelCoord), upColor.a - alpha);
                         if (var > variance) {
                             variance = var;
