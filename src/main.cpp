@@ -17,16 +17,12 @@ int main()
     Color skyBlue = Color{135, 206, 235, 255};
     Texture2D texFull = LoadTexture("texture.png");
     Shader shader = LoadShader(0, TextFormat("src/lights.fs"));
-    SetShaderValue(shader, GetShaderLocation(shader, "ourTexture"), &texFull, SHADER_UNIFORM_VEC2);
+    SetShaderValue(shader, GetShaderLocation(shader, "Texture"), &texFull, SHADER_UNIFORM_VEC2);
 
     SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &resolution, SHADER_UNIFORM_VEC2);
 
     Vector2 light_props = {5, 100};
     SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
-
-    int active_index = GetShaderLocation(shader, "active");
-    Vector2 active = {1, 0};
-    SetShaderValue(shader, active_index, &active, SHADER_UNIFORM_VEC2);
 
     RenderTexture2D target = LoadRenderTexture(targetWidth, targetHeight);
 
@@ -41,12 +37,6 @@ int main()
     {
         Vector2 player_position = world.Update();
         SetShaderValue(shader, lightSource_index, &player_position, SHADER_UNIFORM_VEC2);
-        if (IsKeyPressed(KEY_S)) {
-            float shoa = active.x;
-            active.x = active.y;
-            active.y = shoa;
-            SetShaderValue(shader, active_index, &active, SHADER_UNIFORM_VEC2);
-        }
 
         BeginTextureMode(target);
             ClearBackground(skyBlue);
