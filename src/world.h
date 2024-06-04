@@ -30,6 +30,7 @@ class World {
     private:
         std::vector<Block> blocks;
         std::vector<Position> block_positions;
-        Texture2D texFull;
+        Texture2D texture;
+        Vector2 player_position;
         Player player = Player(1, 1);
 };

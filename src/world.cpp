@@ -9,15 +9,15 @@
 
 World::World(int width, int height) {
     player = Player(width, height);
-    texFull = LoadTexture("texture.png");
+    texture = LoadTexture("texture.png");
 }
 
 Vector2 World::Update() {
-    Vector2 player_position = player.Update();
+    player_position = player.Update();
     return player_position;
 }
 
 void World::Draw() {
-    DrawTextureEx(texFull, {0, 0}, 0, 1, WHITE);
+    DrawTextureV(texture, {0, 0}, WHITE);
     player.Draw();
 }

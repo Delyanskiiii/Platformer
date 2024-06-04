@@ -19,37 +19,50 @@ float Distance(vec2 var1, vec2 var2) {
     }  
 }
 
-float Circle(vec2 var1, vec2 var2, bool horizontal) {
-    if (abs(var1.x - var2.x) <= 25 && abs(var1.y - var2.y) <= 25) {
-        if (abs(var1.x - var2.x) < abs(var1.y - var2.y)) {
-            return abs(var1.x - var2.x);
+int Shadow(vec2 var1, vec2 var2, int var3, int var4, int var5, int var6, int alpha) {
+    int diff1 = int(abs(var1.x - var2.x));
+    int diff2 = int(abs(var1.y - var2.y));
+
+    if (diff1 > alpha && diff2 > alpha) {
+        return 0;
+    } else if (diff1 <= alpha && diff2 <= alpha) {
+        return alpha;
+    } else {
+        if (diff1 > alpha) {
+            if (var3 > 0 || var4 > 0) {
+                return alpha;
+            } else {
+                return 0;
+            }
         } else {
-            return abs(var1.y - var2.y);
-        }  
-    } else{
-        if (abs(var1.x - var2.x) > abs(var1.y - var2.y)) {
-            return abs(var1.x - var2.x);
-        } else {
-            return abs(var1.y - var2.y);
-        } 
+            if (var5 > 0 || var6 > 0) {
+                return alpha;
+            } else {
+                return 0;
+            }
+        }
     }
-    //return floor(sqrt((pow(var1.x - var2.x, 2) + pow(var1.y - var2.y, 2))) + 0.5);
 }
 
-float Shadow(float circle, float alpha) {
+float Shadowdi(bool circle, float alpha) {
+    if (circle) {
+        return alpha;
+    } else {
+        return 0;
+    }
     // if (alpha < 0.01) {
     //     //return 100;
     // }
-    if (alpha >= 0.25) {
-        return 25;
-    } else if (circle > alpha * 100) {
-        return 0;
-    } else {
-        return (alpha * 100 - circle);
-    }
+    // if (alpha >= 0.55) {
+    //     return 25;
+    // } else if (circle > alpha * 100) {
+    //     return 0;
+    // } else {
+    //     return (alpha * 100 - circle);
+    // }
 }
 
-float ShadowStrength(float rootPixelAlpha, vec2 lightPixelCoord, vec2 rootPixelCoord) {
+float ShadowStrength(int rootPixelAlpha, vec2 lightPixelCoord, vec2 rootPixelCoord) {
     float strength = 0;
     float var = 0;
     float a = (rootPixelCoord.y - lightPixelCoord.y) / (rootPixelCoord.x - lightPixelCoord.x);
@@ -88,6 +101,7 @@ float ShadowStrength(float rootPixelAlpha, vec2 lightPixelCoord, vec2 rootPixelC
     }
 
     ivec2 currentCoord;
+
     for (float i = pos.x; i <= pos.y; i += 1) {
         if (horizontal) {
             currentCoord = ivec2(i, floor(i * a + b + 0.5));
@@ -99,17 +113,19 @@ float ShadowStrength(float rootPixelAlpha, vec2 lightPixelCoord, vec2 rootPixelC
             }
         }
 
-        vec4 currentColor = texelFetch(Texture, currentCoord, 0);
-        vec4 horColor = texelFetch(Texture, ivec2(currentCoord.x + variance.x, currentCoord.y), 0);
-        vec4 verColor = texelFetch(Texture, ivec2(currentCoord.x, currentCoord.y + variance.y), 0);
+        int currentAlpha = int(texelFetch(Texture, currentCoord, 0).a * 100);
+        int horAlpha = int(texelFetch(Texture, ivec2(currentCoord.x + variance.x, currentCoord.y), 0).a * 100);
+        int betahorAlpha = int(texelFetch(Texture, ivec2(currentCoord.x - variance.x, currentCoord.y), 0).a * 100);
+        int verAlpha = int(texelFetch(Texture, ivec2(currentCoord.x, currentCoord.y + variance.y), 0).a * 100);
+        int betaverAlpha = int(texelFetch(Texture, ivec2(currentCoord.x, currentCoord.y - variance.y), 0).a * 100);
 
-        if (currentColor.a > rootPixelAlpha) {
-            var = Shadow(Circle(currentCoord, rootPixelCoord, true), currentColor.a - rootPixelAlpha);
+        if (currentAlpha > rootPixelAlpha) {
+            var = Shadow(currentCoord, rootPixelCoord, horAlpha - rootPixelAlpha, betahorAlpha - rootPixelAlpha, verAlpha - rootPixelAlpha, betaverAlpha - rootPixelAlpha, currentAlpha - rootPixelAlpha);
             if (var > strength) {
                 strength = var;
             }
-        } else if (horColor.a > rootPixelAlpha && verColor.a > rootPixelAlpha) {
-            var = Shadow(Circle(currentCoord, rootPixelCoord, true), (verColor.a + horColor.a) / 2 - rootPixelAlpha);
+        } else if (horAlpha > rootPixelAlpha && verAlpha > rootPixelAlpha) {
+            var = Shadow(currentCoord, rootPixelCoord, horAlpha - rootPixelAlpha, betahorAlpha - rootPixelAlpha, verAlpha - rootPixelAlpha, betaverAlpha - rootPixelAlpha, int((verAlpha + horAlpha) / 2) - rootPixelAlpha);
             if (var > strength) {
                 strength = var;
             }
@@ -128,8 +144,7 @@ void main() {
     // }
     
     float distance = Distance(lightSource.xy, gl_FragCoord.xy);
-    // float strength = CalculateShadowStrength(texColor.a, lightSource, gl_FragCoord);
-    float strength = ShadowStrength(texColor.a, lightSource.xy, gl_FragCoord.xy);
+    float strength = ShadowStrength(int(texColor.a * 100), lightSource.xy, gl_FragCoord.xy);
 
     if (strength > 0) {
         finalColor = vec4(texColor.xyz - strength / 150, 1);

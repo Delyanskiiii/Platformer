@@ -17,7 +17,9 @@ int main()
     Color skyBlue = Color{135, 206, 235, 255};
     Texture2D texFull = LoadTexture("texture.png");
     Shader shader = LoadShader(0, TextFormat("src/lights.fs"));
-    SetShaderValue(shader, GetShaderLocation(shader, "Texture"), &texFull, SHADER_UNIFORM_VEC2);
+
+    // SetShaderValue(shader, GetShaderLocation(shader, "Texture"), &texFull, SHADER_UNIFORM_SAMPLER2D);
+    // SetShaderValueTexture(shader, GetShaderLocation(shader, "Texture"), texFull);
 
     SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &resolution, SHADER_UNIFORM_VEC2);
 
