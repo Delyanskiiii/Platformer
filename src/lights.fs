@@ -7,128 +7,107 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 uniform sampler2D Texture;
 uniform vec2 lightProps;
 uniform vec2 lightSource;
-uniform vec2 resolution;
 
 out vec4 finalColor;
 
-float Distance(vec2 var1, vec2 var2) {
-    if (abs(var1.x - var2.x) > abs(var1.y - var2.y)) {
-        return abs(var1.x - var2.x);
-    } else {
-        return abs(var1.y - var2.y);
-    }  
+int Alpha(float var1) {
+    return int(floor(var1 * 20 + 0.5));
 }
 
-int Shadow(vec2 var1, vec2 var2, int var3, int var4, int var5, int var6, int alpha) {
-    int diff1 = int(abs(var1.x - var2.x));
-    int diff2 = int(abs(var1.y - var2.y));
-
-    if (diff1 > alpha && diff2 > alpha) {
-        return 0;
-    } else if (diff1 <= alpha && diff2 <= alpha) {
-        return alpha;
-    } else {
-        if (diff1 > alpha) {
-            if (var3 > 0 || var4 > 0) {
-                return alpha;
-            } else {
-                return 0;
-            }
-        } else {
-            if (var5 > 0 || var6 > 0) {
-                return alpha;
-            } else {
-                return 0;
-            }
-        }
-    }
+int Distance(ivec2 var1, ivec2 var2) {
+    return int(floor(sqrt(pow(var1.x - var2.x, 2) + pow(var1.y - var2.y, 2))));
 }
 
-float Shadowdi(bool circle, float alpha) {
-    if (circle) {
-        return alpha;
-    } else {
-        return 0;
-    }
-    // if (alpha < 0.01) {
-    //     //return 100;
-    // }
-    // if (alpha >= 0.55) {
-    //     return 25;
-    // } else if (circle > alpha * 100) {
-    //     return 0;
-    // } else {
-    //     return (alpha * 100 - circle);
-    // }
-}
-
-float ShadowStrength(int rootPixelAlpha, vec2 lightPixelCoord, vec2 rootPixelCoord) {
+float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
     float strength = 0;
-    float var = 0;
-    float a = (rootPixelCoord.y - lightPixelCoord.y) / (rootPixelCoord.x - lightPixelCoord.x);
-    float b = rootPixelCoord.y - a * rootPixelCoord.x;
-    bool vertical = false;
+    float placeHolder = 0;
+    float a = float(pixelLocation.y - lightLocation.y) / (pixelLocation.x - lightLocation.x);
+    float b = pixelLocation.y - a * pixelLocation.x;
 
-    if (rootPixelCoord.x == lightPixelCoord.x) {
-        vertical = true;
-    }
+    ivec2 location;
+    ivec2 obstacleLocation;
+    ivec2 variance = ivec2(-1, -1);
 
-    vec2 pos;
-    vec2 variance = vec2(-1, -1);
     bool horizontal = false;
 
-    if (abs(lightPixelCoord.x - rootPixelCoord.x) > abs(lightPixelCoord.y - rootPixelCoord.y)) {
+    // Sets the search for obstacle location to always be increasing and determines if it's going vertically or horizontally depending on the difference.
+    if (abs(lightLocation.x - pixelLocation.x) > abs(lightLocation.y - pixelLocation.y)) {
         horizontal = true;
-        if (lightPixelCoord.x > rootPixelCoord.x) {
-            pos = vec2(rootPixelCoord.x, lightPixelCoord.x);
+        if (lightLocation.x > pixelLocation.x) {
+            location = ivec2(pixelLocation.x, lightLocation.x);
         } else {
-            pos = vec2(lightPixelCoord.x, rootPixelCoord.x);
+            location = ivec2(lightLocation.x, pixelLocation.x);
         }
     } else {
-        if (lightPixelCoord.y > rootPixelCoord.y) {
-            pos = vec2(rootPixelCoord.y, lightPixelCoord.y);
+        if (lightLocation.y > pixelLocation.y) {
+            location = ivec2(pixelLocation.y, lightLocation.y);
         } else {
-            pos = vec2(lightPixelCoord.y, rootPixelCoord.y);
+            location = ivec2(lightLocation.y, pixelLocation.y);
         }
     }
     
-    if (lightPixelCoord.x > rootPixelCoord.x) {
-        variance = vec2(1, variance.y);
+    // Sets the variance depending on the direction of the light for edge cases.
+    if (lightLocation.x > pixelLocation.x) {
+        variance = ivec2(1, variance.y);
+    }
+    if (lightLocation.y > pixelLocation.y) {
+        variance = ivec2(variance.x, 1);
     }
 
-    if (lightPixelCoord.y > rootPixelCoord.y) {
-        variance = vec2(variance.x, 1);
-    }
+    // Checks if there is an obstacle between the light and the pixel.
+    for (float i = location.x; i <= location.y; i += 1) {
 
-    ivec2 currentCoord;
-
-    for (float i = pos.x; i <= pos.y; i += 1) {
+        // Sets the obstacle location.
         if (horizontal) {
-            currentCoord = ivec2(i, floor(i * a + b + 0.5));
+            obstacleLocation = ivec2(i, floor(i * a + b + 0.5));
         } else {
-            if (vertical) {
-                currentCoord = ivec2(rootPixelCoord.x, i);
+            if (pixelLocation.x == lightLocation.x) {
+                obstacleLocation = ivec2(pixelLocation.x, i);
             } else {
-                currentCoord = ivec2(floor((i - b) / a + 0.5), i);
+                obstacleLocation = ivec2(floor((i - b) / a + 0.5), i);
             }
         }
 
-        int currentAlpha = int(texelFetch(Texture, currentCoord, 0).a * 100);
-        int horAlpha = int(texelFetch(Texture, ivec2(currentCoord.x + variance.x, currentCoord.y), 0).a * 100);
-        int betahorAlpha = int(texelFetch(Texture, ivec2(currentCoord.x - variance.x, currentCoord.y), 0).a * 100);
-        int verAlpha = int(texelFetch(Texture, ivec2(currentCoord.x, currentCoord.y + variance.y), 0).a * 100);
-        int betaverAlpha = int(texelFetch(Texture, ivec2(currentCoord.x, currentCoord.y - variance.y), 0).a * 100);
+        // Gets the alpha value of the obstacle and 2 surrounding pixels.
+        int obstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
+        int horAlpha = Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + variance.x, obstacleLocation.y), 0).a);
+        int verAlpha = Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + variance.y), 0).a);
 
-        if (currentAlpha > rootPixelAlpha) {
-            var = Shadow(currentCoord, rootPixelCoord, horAlpha - rootPixelAlpha, betahorAlpha - rootPixelAlpha, verAlpha - rootPixelAlpha, betaverAlpha - rootPixelAlpha, currentAlpha - rootPixelAlpha);
-            if (var > strength) {
-                strength = var;
+        // If there is an obstacle, returns the strength of the light.
+        if (obstacleAlpha > pixelAlpha || (horAlpha > pixelAlpha && verAlpha > pixelAlpha)) {
+
+            // Determines if we are in an edge case.
+            if (horAlpha > pixelAlpha && verAlpha > pixelAlpha) {
+                obstacleAlpha = int((verAlpha + horAlpha) / 2);
             }
-        } else if (horAlpha > rootPixelAlpha && verAlpha > rootPixelAlpha) {
-            var = Shadow(currentCoord, rootPixelCoord, horAlpha - rootPixelAlpha, betahorAlpha - rootPixelAlpha, verAlpha - rootPixelAlpha, betaverAlpha - rootPixelAlpha, int((verAlpha + horAlpha) / 2) - rootPixelAlpha);
-            if (var > strength) {
-                strength = var;
-            }
+            strength = 10;
+            break;
+            // if (float(obstacleLocation.y - 0.5) < float(obstacleLocation.x + variance.x * 0.5) * a + b && float(obstacleLocation.x + variance.x * 0.5) * a + b < float(obstacleLocation.y + 0.5)) {
+            //     strength = 10;
+            //     break;
+                // if (variance.x > 0 && obstacleLocation.x <= pixelLocation.x && pixelLocation.x <= obstacleLocation.x + variance.x * (obstacleAlpha - pixelAlpha)) {
+                //     strength = 10;
+                //     break;
+                // } else if (variance.x < 0 && obstacleLocation.x + variance.x * (obstacleAlpha - pixelAlpha) <= pixelLocation.x && pixelLocation.x <= obstacleLocation.x) {
+                //     strength = 10;
+                //     break;
+                // }
+            // } 
+            // else if (float(obstacleLocation.x - 0.5) < (float(obstacleLocation.y + variance.y * 0.5) - b) / a && (float(obstacleLocation.y + variance.y * 0.5) - b) / a < float(obstacleLocation.x + 0.5)) {
+            //     strength = 10;
+            //     break;
+            // }
+                // if (variance.y > 0 && obstacleLocation.y <= pixelLocation.y && pixelLocation.y <= obstacleLocation.y + variance.y * (obstacleAlpha - pixelAlpha)) {
+                //     strength = 10;
+                //     break;
+                // } else if (variance.y < 0 && obstacleLocation.y + variance.y * (obstacleAlpha - pixelAlpha) <= pixelLocation.y && pixelLocation.y <= obstacleLocation.y) {
+                //     strength = 10;
+                //     break;
+                // }
+            // } else {
+            //     strength = 0;
+            //     break;
+            // }
         }
     }
 
@@ -136,19 +115,24 @@ float ShadowStrength(int rootPixelAlpha, vec2 lightPixelCoord, vec2 rootPixelCoo
 }
 
 void main() {
-    vec4 texColor = texture(Texture, fragTexCoord);
+    ivec2 lightLocation = ivec2(lightSource.xy);
+    ivec2 pixelLocation = ivec2(gl_FragCoord.xy);
+    vec4 pixelColor = texelFetch(Texture, pixelLocation, 0);
 
     //Skip pixel if it's not on the level layer
-    // if (texColor.a == 0) {
+    // if (pixelColor.a == 0) {
     //     discard;
     // }
     
-    float distance = Distance(lightSource.xy, gl_FragCoord.xy);
-    float strength = ShadowStrength(int(texColor.a * 100), lightSource.xy, gl_FragCoord.xy);
+    // distance is from 0 to 367
+    // int distance = Distance(lightLocation, pixelLocation);
+
+    float strength = Shadow(Alpha(pixelColor.a), lightLocation, pixelLocation);
 
     if (strength > 0) {
-        finalColor = vec4(texColor.xyz - strength / 150, 1);
+        finalColor = vec4(pixelColor.xyz - strength / 100, 1);
     } else {
-        finalColor = vec4(texColor.xyz + (1 - distance / 320) / 5, 1);
+        finalColor = vec4(pixelColor.xyz, 1);
+        // finalColor = vec4(pixelColor.xyz + (0.1 - float(distance / 3670)), 1);
     }
 }

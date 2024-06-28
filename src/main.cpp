@@ -12,16 +12,12 @@ int main()
     int targetWidth = 320;
     int targetHeight = 180;
 
-    Vector2 resolution = {targetWidth, targetHeight};
-
     Color skyBlue = Color{135, 206, 235, 255};
     Texture2D texFull = LoadTexture("texture.png");
     Shader shader = LoadShader(0, TextFormat("src/lights.fs"));
 
     // SetShaderValue(shader, GetShaderLocation(shader, "Texture"), &texFull, SHADER_UNIFORM_SAMPLER2D);
     // SetShaderValueTexture(shader, GetShaderLocation(shader, "Texture"), texFull);
-
-    SetShaderValue(shader, GetShaderLocation(shader, "resolution"), &resolution, SHADER_UNIFORM_VEC2);
 
     Vector2 light_props = {5, 100};
     SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
@@ -30,7 +26,7 @@ int main()
 
     ToggleFullscreen();
     HideCursor();
-    SetTargetFPS(100);
+    SetTargetFPS(50);
 
     World world = World(targetWidth, targetHeight);
     int lightSource_index = GetShaderLocation(shader, "lightSource");
@@ -39,7 +35,6 @@ int main()
     {
         Vector2 player_position = world.Update();
         SetShaderValue(shader, lightSource_index, &player_position, SHADER_UNIFORM_VEC2);
-
         BeginTextureMode(target);
             ClearBackground(skyBlue);
 
