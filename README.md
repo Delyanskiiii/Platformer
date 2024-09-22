@@ -21,7 +21,7 @@ This project is a precision platformer game built in C++ using the Raylib librar
 - Clone the [Repository](https://github.com/Delyanskiiii/Platformer)
 
     ```bash
-    git clone https://github.com/Delyanskiiii/Bernard
+    git clone https://github.com/Delyanskiiii/Platformer
     ```
 
 - Build and run the game by opening the project in VS Code and compiling.
