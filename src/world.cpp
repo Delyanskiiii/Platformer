@@ -5,11 +5,11 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include "player.h"
+#include "./player/player.h"
 
 World::World(int width, int height) {
     player = Player(width, height);
-    texture = LoadTexture("texture.png");
+    texture = LoadTexture("textures/texture.png");
 }
 
 Vector2 World::Update() {

@@ -33,14 +33,14 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
     float a = float(pixelLocation.y - lightLocation.y) / (pixelLocation.x - lightLocation.x);
     float b = pixelLocation.y - a * pixelLocation.x;
     
-    ivec2 variance = ivec2(Direction(pixelLocation.x, lightLocation.x), Direction(pixelLocation.y, lightLocation.y));
+    ivec2 variance = ivec2(Direction(lightLocation.x, pixelLocation.x), Direction(lightLocation.y, pixelLocation.y));
     ivec2 obstacleLocation;
     int alphaDifference;
     int side = 0;
 
     if (pixelLocation.x + 0.5 * variance.x == lightLocation.x - 0.5 * variance.x) {
-        for (float i = lightLocation.y + 0.5 * variance.y; i != pixelLocation.y - 0.5 * variance.y; i += variance.y) {
-            obstacleLocation = ivec2(lightLocation.x, int(i + 0.5 * variance.y));
+        for (float i = pixelLocation.y + 0.5 * variance.y; i != lightLocation.y - 0.5 * variance.y; i += variance.y) {
+            obstacleLocation = ivec2(pixelLocation.x, int(i + 0.5 * variance.y));
 
             int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
 
@@ -51,8 +51,8 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
             }
         }
     } else {
-        float lasty = lightLocation.y - 0.5 * variance.y;
-        for (float i = lightLocation.x + 0.5 * variance.x; i != pixelLocation.x - 0.5 * variance.x; i += variance.x) {
+        float lasty = pixelLocation.y - 0.5 * variance.y;
+        for (float i = pixelLocation.x + 0.5 * variance.x; i != lightLocation.x - 0.5 * variance.x; i += variance.x) {
             float y = floor(i * a + b + 0.5) - 0.5 * variance.y;
             while (y != lasty) {
                 obstacleLocation = ivec2(int(floor((lasty + variance.y - b) / a + 0.5)), int(lasty + variance.y + 0.5 * variance.y));

@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <vector>
-#include "player.h"
+#include "./player/player.h"
 
 struct Pixel {
     int depth;

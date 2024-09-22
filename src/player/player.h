@@ -1,11 +1,11 @@
 #pragma once
-#include "input.h"
+#include "../input.h"
 #include <raylib.h>
 
 class Player
 {
     public:
-        Player(int width, int height);
+        Player(float width, float height);
         Vector2 Update();
         void Draw();
         // Vector2 position() { return position; }

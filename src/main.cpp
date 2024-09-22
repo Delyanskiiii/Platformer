@@ -13,11 +13,7 @@ int main()
     int targetHeight = 180;
 
     Color skyBlue = Color{135, 206, 235, 255};
-    Texture2D texFull = LoadTexture("texture.png");
-    Shader shader = LoadShader(0, TextFormat("src/lights.fs"));
-
-    // SetShaderValue(shader, GetShaderLocation(shader, "Texture"), &texFull, SHADER_UNIFORM_SAMPLER2D);
-    // SetShaderValueTexture(shader, GetShaderLocation(shader, "Texture"), texFull);
+    Shader shader = LoadShader(0, TextFormat("shaders/shadow.fs"));
 
     Vector2 light_props = {5, 100};
     SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
@@ -50,7 +46,6 @@ int main()
         EndDrawing();
     }
     UnloadShader(shader);
-    UnloadTexture(texFull);
     UnloadRenderTexture(target);
     CloseWindow();
     return 0;

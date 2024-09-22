@@ -1,8 +1,8 @@
 #include <raylib.h>
 #include "player.h"
-#include "input.h"
+#include "../input.h"
 
-Player::Player(int width, int height) {
+Player::Player(float width, float height) {
     screen = {width, height};
     // size.x = 10;
     size = { 1, 1 };
