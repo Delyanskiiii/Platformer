@@ -1,22 +1,22 @@
 #pragma once
-#include "../input.h"
+#include "input.h"
 #include <raylib.h>
 
 class Player
 {
     public:
-        Player(float width, float height);
+        Player();
         Vector2 Update();
         void Draw();
         // Vector2 position() { return position; }
 
     private:
         int resolution_scale;
-        Input inputer;
-        Vector2 size;
+        Input inputer = Input();
+        Vector2 size = { 1, 1 };
         Vector2 screen;
         Vector2 input;
-        Vector2 position;
-        Vector2 velocity;
+        Vector2 position = { 0, 0 };
+        Vector2 velocity = { 1, 1 };
         Vector2 pastVelocity[100];
 };

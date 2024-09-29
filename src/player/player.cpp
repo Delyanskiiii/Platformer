@@ -1,15 +1,16 @@
 #include <raylib.h>
 #include "player.h"
-#include "../input.h"
+#include "input.h"
+#include "context.h"
+#include "running.h"
+#include "constants.h"
 
-Player::Player(float width, float height) {
-    screen = {width, height};
-    // size.x = 10;
-    size = { 1, 1 };
-    position = { 0, 0 };
-    velocity = { 1, 1 };
-    inputer = Input();
-    // Pair pastVelocity[100];
+Player::Player() {
+    screen = {float(TARGET_WIDTH), float(TARGET_HEIGHT)};
+    Context *context = new Context(new RunningLeft);
+    context->Request1();
+    context->Request2();
+    delete context;
 }
 
 Vector2 Player::Update() {

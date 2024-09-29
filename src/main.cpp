@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <iostream>
 #include "world.h"
+#include "constants.h"
 
 int main()
 {
@@ -9,22 +10,19 @@ int main()
     int displayWidth = GetMonitorWidth(display);
     int displayHeight = GetMonitorHeight(display);
 
-    int targetWidth = 320;
-    int targetHeight = 180;
-
     Color skyBlue = Color{135, 206, 235, 255};
     Shader shader = LoadShader(0, TextFormat("shaders/shadow.fs"));
 
     Vector2 light_props = {5, 100};
     SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
 
-    RenderTexture2D target = LoadRenderTexture(targetWidth, targetHeight);
+    RenderTexture2D target = LoadRenderTexture(TARGET_WIDTH, TARGET_HEIGHT);
 
     ToggleFullscreen();
     HideCursor();
     SetTargetFPS(50);
 
-    World world = World(targetWidth, targetHeight);
+    World world = World();
     int lightSource_index = GetShaderLocation(shader, "lightSource");
 
     while (!WindowShouldClose())
@@ -41,7 +39,7 @@ int main()
 
         BeginDrawing();
             ClearBackground(skyBlue);
-            DrawTexturePro(target.texture, (Rectangle){0, 0, targetWidth, -targetHeight}, (Rectangle){0, 0, displayWidth, displayHeight}, (Vector2){0, 0}, 0.0f, WHITE);
+            DrawTexturePro(target.texture, (Rectangle){0, 0, float(TARGET_WIDTH), float(-TARGET_HEIGHT)}, (Rectangle){0, 0, float(displayWidth), float(displayHeight)}, (Vector2){0, 0}, 0.0f, WHITE);
             DrawFPS(displayWidth - 80, 0);
         EndDrawing();
     }

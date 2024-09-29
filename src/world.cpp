@@ -5,10 +5,9 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include "./player/player.h"
+#include "player.h"
 
-World::World(int width, int height) {
-    player = Player(width, height);
+World::World() {
     texture = LoadTexture("textures/texture.png");
 }
 
