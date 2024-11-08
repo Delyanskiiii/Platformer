@@ -62,11 +62,11 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
 
                         if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) > pixelAlpha || Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) > pixelAlpha) {
                             side = -1;
-                            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha) {
+                            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) <= pixelAlpha) {
                                 side = 3;
                             }
                         } else {
-                            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha) {
+                            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
                                 side = 3;
                             }
                         }
@@ -76,7 +76,7 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
                         break;
                     }
                 } else {
-                    if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha) {
+                    if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
                         side = 3;
                     }
                     break;
@@ -95,7 +95,7 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
         if (possibleObstacleAlpha > pixelAlpha) {
             alphaDifference = possibleObstacleAlpha - pixelAlpha;
             side = -1;
-            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha) {
+            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) <= pixelAlpha) {
                 side = 0;
             }
             break;
@@ -116,11 +116,11 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
 // && degrees(atan(abs(a))) > 2
 
     if (side == 1) {
-        if (abs(pixelLocation.y - obstacleLocation.y) <= verticalDifference) {
+        if (abs(pixelLocation.y - obstacleLocation.y) <= verticalDifference && abs(pixelLocation.x - obstacleLocation.x) <= horizontalDifference) {
             strength = 10;
         }
     } else if (side == -1) {
-        if (abs(pixelLocation.x - obstacleLocation.x) <= horizontalDifference) {
+        if (abs(pixelLocation.x - obstacleLocation.x) <= horizontalDifference && abs(pixelLocation.y - obstacleLocation.y) <= verticalDifference) {
             strength = 10;
         }
     } else {
