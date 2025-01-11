@@ -1,22 +1,29 @@
 #pragma once
 #include "input.h"
+#include "state.h"
 #include <raylib.h>
+#include <iostream>
+#include <typeinfo>
 
 class Player
 {
-    public:
-        Player();
-        Vector2 Update();
-        void Draw();
-        // Vector2 position() { return position; }
-
     private:
         int resolution_scale;
         Input inputer = Input();
+        State* state_;
         Vector2 size = { 1, 1 };
         Vector2 screen;
         Vector2 input;
         Vector2 position = { 0, 0 };
         Vector2 velocity = { 1, 1 };
         Vector2 pastVelocity[100];
+
+    public:
+        Player();
+        Vector2 Update();
+        void Draw();
+        ~Player();
+        void TransitionTo(State* state);
+        bool direction = true;
+        // Vector2 position() { return position; }
 };

@@ -1,5 +1,9 @@
 #include "state.h"
 
+State::State(Player* player) {
+    this->player_ = player;
+}
+
 /**
  * Destructor for State. Defined as virtual to ensure proper cleanup of derived classes.
  */
@@ -12,6 +16,3 @@ State::~State() {
  *
  * @param context Pointer to the Context object.
  */
-void State::set_context(Context* context) {
-    this->context_ = context;
-}

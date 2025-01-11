@@ -37,68 +37,118 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
 
     float lasty = pixelLocation.y - 0.5 * variance.y;
 
-    for (float i = pixelLocation.x + 0.5 * variance.x; i != lightLocation.x - 0.5 * variance.x; i += variance.x) {
-        float y = floor(i * a + b + 0.5) - 0.5 * variance.y;
-        while (y != lasty) {
-            obstacleLocation = ivec2(int(floor((lasty + variance.y - b) / a + 0.5)), int(lasty + variance.y + 0.5 * variance.y));
+    if (pixelLocation.x == lightLocation.x) {
+        side = -1;
+        // float i = pixelLocation.x;
+        // float y = floor(i * a + b + 0.5) - 0.5 * variance.y;
+        // while (y != lasty) {
+        //     obstacleLocation = ivec2(int(floor((lasty + variance.y - b) / a + 0.5)), int(lasty + variance.y + 0.5 * variance.y));
+
+        //     int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
+
+        //     if (possibleObstacleAlpha > pixelAlpha) {
+        //         alphaDifference = possibleObstacleAlpha - pixelAlpha;
+        //         side = 1;
+        //     }
+
+        //     lasty += variance.y;
+
+        //     if (side == 1) {
+        //         ivec2 newObstacleLocation = ivec2(int(i + 0.5 * variance.x), int(floor(i * a + b + 0.5)));
+
+        //         if (obstacleLocation == newObstacleLocation) {
+        //             int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
+
+        //             if (possibleObstacleAlpha > pixelAlpha) {
+        //                 alphaDifference = possibleObstacleAlpha - pixelAlpha;
+
+        //                 if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) > pixelAlpha || Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) > pixelAlpha) {
+        //                     side = -1;
+        //                     if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) <= pixelAlpha) {
+        //                         side = 3;
+        //                     }
+        //                 } else {
+        //                     if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
+        //                         side = 3;
+        //                     }
+        //                 }
+        //                 // if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) > pixelAlpha || Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) > pixelAlpha) {
+        //                 //     side = 1;
+        //                 // }
+        //                 break;
+        //             }
+        //         } else {
+        //             if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
+        //                 side = 3;
+        //             }
+        //             break;
+        //         }
+        //     }
+        // }
+    } else {
+        for (float i = pixelLocation.x + 0.5 * variance.x; i != lightLocation.x - 0.5 * variance.x; i += variance.x) {
+            float y = floor(i * a + b + 0.5) - 0.5 * variance.y;
+            while (y != lasty) {
+                obstacleLocation = ivec2(int(floor((lasty + variance.y - b) / a + 0.5)), int(lasty + variance.y + 0.5 * variance.y));
+
+                int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
+
+                if (possibleObstacleAlpha > pixelAlpha) {
+                    alphaDifference = possibleObstacleAlpha - pixelAlpha;
+                    side = 1;
+                }
+
+                lasty += variance.y;
+
+                if (side == 1) {
+                    ivec2 newObstacleLocation = ivec2(int(i + 0.5 * variance.x), int(floor(i * a + b + 0.5)));
+
+                    if (obstacleLocation == newObstacleLocation) {
+                        int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
+
+                        if (possibleObstacleAlpha > pixelAlpha) {
+                            alphaDifference = possibleObstacleAlpha - pixelAlpha;
+
+                            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) > pixelAlpha || Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) > pixelAlpha) {
+                                side = -1;
+                                if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) <= pixelAlpha) {
+                                    side = 3;
+                                }
+                            } else {
+                                if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
+                                    side = 3;
+                                }
+                            }
+                            // if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) > pixelAlpha || Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) > pixelAlpha) {
+                            //     side = 1;
+                            // }
+                            break;
+                        }
+                    } else {
+                        if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
+                            side = 3;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (side != 0) {
+                break;
+            }
+            
+            obstacleLocation = ivec2(int(i + 0.5 * variance.x), int(floor(i * a + b + 0.5)));
 
             int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
 
             if (possibleObstacleAlpha > pixelAlpha) {
                 alphaDifference = possibleObstacleAlpha - pixelAlpha;
-                side = 1;
-            }
-
-            lasty += variance.y;
-
-            if (side == 1) {
-                ivec2 newObstacleLocation = ivec2(int(i + 0.5 * variance.x), int(floor(i * a + b + 0.5)));
-
-                if (obstacleLocation == newObstacleLocation) {
-                    int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
-
-                    if (possibleObstacleAlpha > pixelAlpha) {
-                        alphaDifference = possibleObstacleAlpha - pixelAlpha;
-
-                        if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) > pixelAlpha || Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) > pixelAlpha) {
-                            side = -1;
-                            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) <= pixelAlpha) {
-                                side = 3;
-                            }
-                        } else {
-                            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
-                                side = 3;
-                            }
-                        }
-                        // if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) > pixelAlpha || Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) > pixelAlpha) {
-                        //     side = 1;
-                        // }
-                        break;
-                    }
-                } else {
-                    if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1 * variance.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1, obstacleLocation.y), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x - 1, obstacleLocation.y), 0).a) <= pixelAlpha) {
-                        side = 3;
-                    }
-                    break;
+                side = -1;
+                if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) <= pixelAlpha) {
+                    side = 0;
                 }
+                break;
             }
-        }
-
-        if (side != 0) {
-            break;
-        }
-        
-        obstacleLocation = ivec2(int(i + 0.5 * variance.x), int(floor(i * a + b + 0.5)));
-
-        int possibleObstacleAlpha = Alpha(texelFetch(Texture, obstacleLocation, 0).a);
-
-        if (possibleObstacleAlpha > pixelAlpha) {
-            alphaDifference = possibleObstacleAlpha - pixelAlpha;
-            side = -1;
-            if (Alpha(texelFetch(Texture, ivec2(obstacleLocation.x + 1 * variance.x, obstacleLocation.y), 0).a) > pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y + 1), 0).a) <= pixelAlpha && Alpha(texelFetch(Texture, ivec2(obstacleLocation.x, obstacleLocation.y - 1), 0).a) <= pixelAlpha) {
-                side = 0;
-            }
-            break;
         }
     }
 

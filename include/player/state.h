@@ -1,6 +1,6 @@
 #pragma once
 
-class Context;
+class Player;
 
 /**
  * The base State class declares methods that all Concrete State should
@@ -13,21 +13,15 @@ protected:
     /**
      * @var Context
      */
-    Context* context_;
+    Player* player_;
 
 public:
+    State(Player* player);
     virtual ~State();
-
-    /**
-     * Sets the context for the state.
-     *
-     * @param context Pointer to the Context object.
-     */
-    void set_context(Context* context);
 
     /**
      * Pure virtual methods to be implemented by Concrete States.
      */
     virtual void Handle1() = 0;
-    virtual void Handle2() = 0;
+    // virtual void Handle2() = 0;
 };
