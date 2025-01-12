@@ -2,14 +2,11 @@
 #include "input.h"
 #include "state.h"
 #include <raylib.h>
-#include <iostream>
-#include <typeinfo>
 
 class Player
 {
     private:
         int resolution_scale;
-        Input inputer = Input();
         State* state_;
         Vector2 size = { 1, 1 };
         Vector2 screen;
@@ -19,6 +16,7 @@ class Player
         Vector2 pastVelocity[100];
 
     public:
+        Input inputer = Input();
         Player();
         Vector2 Update();
         void Draw();
