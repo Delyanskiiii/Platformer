@@ -1,5 +1,8 @@
 #pragma once
 #include "state.h"
+#include "idle.h"
+#include "glide.h"
+#include "slide.h"
 
 class Run : public State {
     public:

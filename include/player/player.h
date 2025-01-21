@@ -1,7 +1,10 @@
 #pragma once
-#include "input.h"
-#include "state.h"
+
 #include <raylib.h>
+#include "input.h"
+#include "constants.h"
+
+class State;
 
 class Player
 {
@@ -13,7 +16,7 @@ class Player
         Vector2 input;
         Vector2 position = { 0, 0 };
         Vector2 velocity = { 1, 1 };
-        Vector2 pastVelocity[100];
+        // Vector2 pastVelocity[100];
 
     public:
         Input inputer = Input();

@@ -1,6 +1,8 @@
 #pragma once
 #include "state.h"
-#include "player.h"
+#include "run.h"
+#include "glide.h"
+#include "slide.h"
 
 class Idle : public State {
     private:

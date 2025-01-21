@@ -1,7 +1,5 @@
 #include <iostream>
 #include "idle.h"
-#include "run.h"
-
 
 void Idle::Movement() {
     input = player_->inputer.GetInput();

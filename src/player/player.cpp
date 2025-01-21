@@ -1,9 +1,7 @@
 #include <raylib.h>
 #include "player.h"
-#include "input.h"
-#include "run.h"
 #include "idle.h"
-#include "constants.h"
+#include "state.h"
 
 Player::Player() {
     this->state_ = new Idle(this);

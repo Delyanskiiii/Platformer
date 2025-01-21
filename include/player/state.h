@@ -1,6 +1,6 @@
 #pragma once
 
-class Player;
+#include "player.h"
 
 class State {
     protected:
@@ -10,5 +10,6 @@ class State {
         State(Player* player);
         
         virtual ~State();
-        virtual void Movement() = 0;
+        // virtual void ShouldExit() = 0;
+        virtual void Movement();
 };

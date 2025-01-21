@@ -7,3 +7,7 @@ State::State(Player* player) {
 State::~State() {
     // Virtual destructor can be empty or have cleanup code if needed
 }
+
+void State::Movement() {
+    // ShouldExit();
+}
