@@ -10,6 +10,7 @@ class State {
         State(Player* player);
         
         virtual ~State();
-        // virtual void ShouldExit() = 0;
+
+        virtual void ShouldTransition() = 0;
         virtual void Movement();
 };

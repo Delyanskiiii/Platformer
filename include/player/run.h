@@ -7,5 +7,7 @@
 class Run : public State {
     public:
         using State::State;
+
+        void ShouldTransition() override;
         void Movement() override;
 };

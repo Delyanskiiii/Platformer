@@ -5,7 +5,7 @@
 
 int main()
 {
-    InitWindow(0, 0, "main");
+    InitWindow(0, 0, "Main");
     int display = GetCurrentMonitor();
     int displayWidth = GetMonitorWidth(display);
     int displayHeight = GetMonitorHeight(display);
@@ -19,7 +19,7 @@ int main()
     RenderTexture2D target = LoadRenderTexture(TARGET_WIDTH, TARGET_HEIGHT);
 
     // ToggleFullscreen();
-    HideCursor();
+    HideCursor(); 
     SetTargetFPS(50);
 
     World world = World();

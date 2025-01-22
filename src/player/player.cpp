@@ -18,6 +18,8 @@ void Player::TransitionTo(State* state) {
 }
 
 Vector2 Player::Update() {
+    input = inputer.GetInput();
+    this->state_->ShouldTransition();
     this->state_->Movement();
     return position;
 }

@@ -9,5 +9,5 @@ State::~State() {
 }
 
 void State::Movement() {
-    // ShouldExit();
+
 }

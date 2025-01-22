@@ -13,9 +13,6 @@ class Player
         State* state_;
         Vector2 size = { 1, 1 };
         Vector2 screen;
-        Vector2 input;
-        Vector2 position = { 0, 0 };
-        Vector2 velocity = { 1, 1 };
         // Vector2 pastVelocity[100];
 
     public:
@@ -26,5 +23,8 @@ class Player
         ~Player();
         void TransitionTo(State* state);
         bool direction = true;
+        Vector2 input;
+        Vector2 position = { 160, 90 };
+        Vector2 velocity = { 1, 1 };
         // Vector2 position() { return position; }
 };

@@ -5,10 +5,7 @@
 #include "slide.h"
 
 class Idle : public State {
-    private:
-        Vector2 input;
-
     public:
         using State::State;
-        void Movement() override;
+        void ShouldTransition() override;
 };
