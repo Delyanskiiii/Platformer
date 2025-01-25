@@ -1,14 +1,10 @@
-#include <iostream>
 #include <raylib.h>
-#include <fstream>
 #include "world.h"
-#include <sstream>
-#include <vector>
-#include <algorithm>
 #include "player.h"
 
 World::World() {
-    texture = LoadTexture("textures/texture.png");
+    texture = LoadTexture("textures/Level.png");
+    image = LoadImageFromTexture(texture);
 }
 
 Vector2 World::Update() {
@@ -19,4 +15,11 @@ Vector2 World::Update() {
 void World::Draw() {
     DrawTextureV(texture, {0, 0}, WHITE);
     player.Draw();
+}
+
+Vector2 World::NewPosition(Vector2 origin, Vector2 destination) {
+    if (GetImageColor(image, destination.x, destination.y).a != 0) {
+        return origin;
+    }
+    return {destination.x, destination.y};
 }

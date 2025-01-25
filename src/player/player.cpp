@@ -2,10 +2,11 @@
 #include "player.h"
 #include "idle.h"
 #include "state.h"
+#include "world.h"
 
-Player::Player() {
+Player::Player(World* world) {
     this->state_ = new Idle(this);
-    screen = {float(TARGET_WIDTH), float(TARGET_HEIGHT)};
+    world_ = world;
 }
 
 Player::~Player() {
@@ -19,11 +20,17 @@ void Player::TransitionTo(State* state) {
 
 Vector2 Player::Update() {
     input = inputer.GetInput();
+
     this->state_->ShouldTransition();
     this->state_->Movement();
+
     return position;
 }
 
 void Player::Draw() {
-    DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
+    DrawRectangle(position.x, position.y, 1, 1, WHITE);
+}
+
+Vector2 Player::NewPosition(Vector2 origin, Vector2 destination) {
+    return this->world_->NewPosition(origin, destination);
 }
