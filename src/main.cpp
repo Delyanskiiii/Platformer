@@ -18,7 +18,7 @@ int main()
 
     RenderTexture2D target = LoadRenderTexture(TARGET_WIDTH, TARGET_HEIGHT);
 
-    // ToggleFullscreen();
+    ToggleFullscreen();
     HideCursor(); 
     SetTargetFPS(50);
 
