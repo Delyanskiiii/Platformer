@@ -32,48 +32,22 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
     ivec2 variance = ivec2(Direction(pixelLocation.x, lightLocation.x), Direction(pixelLocation.y, lightLocation.y));
     float a = float(pixelLocation.y - lightLocation.y) / (pixelLocation.x - lightLocation.x);
     float b = pixelLocation.y - a * pixelLocation.x;
-    bool direction;
     ivec2 currentPixelLocation = lightLocation;
+    int height;
 
     while (currentPixelLocation.x != pixelLocation.x || currentPixelLocation.y != pixelLocation.y) {
-        if (currentPixelLocation.y == pixelLocation.y) {
+
+        if (currentPixelLocation.y == pixelLocation.y || floor((currentPixelLocation.x + variance.x) * a + b + 0.5) == currentPixelLocation.y) {
             currentPixelLocation.x += variance.x;
-            direction = true;
-        } else if (currentPixelLocation.x == pixelLocation.x) {
+        } else {
             currentPixelLocation.y += variance.y;
-            direction = false;
-        } else if (floor((currentPixelLocation.x + variance.x) * a + b + 0.5) == currentPixelLocation.y) {
-            currentPixelLocation.x += variance.x;
-            direction = true;
-        } else if (floor((currentPixelLocation.x + variance.x) * a + b + 0.5) != currentPixelLocation.y) {
-            currentPixelLocation.y += variance.y;
-            direction = false;
         }
 
-        if (Alpha(texelFetch(Texture, currentPixelLocation, 0).a) > pixelAlpha) {
+        height = Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha;
 
-            float angle = asin((currentPixelLocation.y - lightLocation.y) / sqrt(pow(currentPixelLocation.x - lightLocation.x, 2) + pow(currentPixelLocation.y - lightLocation.y, 2)));
-
-            if (direction) {
-                if (abs(angle) < acos(-1.0) / 4) {
-                    if (abs(pixelLocation.x - currentPixelLocation.x) <= Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha) {
-                        return 10;
-                    }
-                } else {
-                    if (abs(pixelLocation.y - currentPixelLocation.y) <= Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha) {
-                        return 10;
-                    }
-                }
-            } else {
-                if (abs(angle) < acos(-1.0) / 4) {
-                    if (abs(pixelLocation.x - currentPixelLocation.x) <= Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha) {
-                        return 10;
-                    }
-                } else {
-                    if (abs(pixelLocation.y - currentPixelLocation.y) <= Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha) {
-                        return 10;
-                    }
-                }
+        if (height > 0) {
+            if (abs(pixelLocation.x - currentPixelLocation.x) <= height && abs(pixelLocation.y - currentPixelLocation.y) <= height) {
+                return 10;
             }
         }
     }
