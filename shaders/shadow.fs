@@ -35,19 +35,39 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
     ivec2 currentPixelLocation = lightLocation;
     int height = 0;
 
+    // height = Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha;
+
+    // if (height > 0) {
+    //     if (Distance(lightLocation, currentPixelLocation) * height / 200 + 1 < height) {
+    //         height = int(Distance(lightLocation, currentPixelLocation) * height / 200 + 1);
+    //     }
+
+    //     if (abs(pixelLocation.x - currentPixelLocation.x) <= height && abs(pixelLocation.y - currentPixelLocation.y) <= height) {
+    //         return 10;
+    //     }
+    // }
+
     while (currentPixelLocation.x != pixelLocation.x || currentPixelLocation.y != pixelLocation.y) {
 
-        if (currentPixelLocation.y == pixelLocation.y || floor((currentPixelLocation.x + variance.x) * a + b + 0.5) == currentPixelLocation.y) {
-            currentPixelLocation.x += variance.x;
+        if (abs(pixelLocation.x - lightLocation.x) < abs(pixelLocation.y - lightLocation.y)) {
+            if (currentPixelLocation.y == pixelLocation.y || floor((currentPixelLocation.x + variance.x) * a + b + 0.5) == currentPixelLocation.y) {
+                currentPixelLocation.x += variance.x;
+            } else {
+                currentPixelLocation.y += variance.y;
+            }
         } else {
-            currentPixelLocation.y += variance.y;
+            if (currentPixelLocation.x == pixelLocation.x || floor((currentPixelLocation.y + variance.y - b) / a + 0.5) == currentPixelLocation.x) {
+                currentPixelLocation.y += variance.y;
+            } else {
+                currentPixelLocation.x += variance.x;
+            }
         }
 
         height = Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha;
 
         if (height > 0) {
-            if (Distance(lightLocation, currentPixelLocation) * height / 200 + 1 < height) {
-                height = int(Distance(lightLocation, currentPixelLocation) * height / 200 + 1);
+            if (pow(Distance(lightLocation, currentPixelLocation), 8) * height / 20000 + 1 < height) {
+                height = int(pow(Distance(lightLocation, currentPixelLocation), 8) * height / 20000 + 1);
             }
 
             if (abs(pixelLocation.x - currentPixelLocation.x) <= height && abs(pixelLocation.y - currentPixelLocation.y) <= height) {
