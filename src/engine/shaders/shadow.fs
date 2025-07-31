@@ -84,9 +84,9 @@ void main() {
     ivec2 pixelLocation = ivec2(gl_FragCoord.xy);
 
     //Skip pixel if it's not on the level layer
-    // if (pixelColor.a == 0) {
-    //     discard;
-    // }
+    if (pixelColor.a == 0) {
+        discard;
+    }
     
     // distance is from 0 to 367
     // int distance = Distance(lightLocation, pixelLocation);

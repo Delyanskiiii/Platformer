@@ -1,6 +1,6 @@
 #include <raylib.h>
 #include <iostream>
-#include "world.h"
+#include "renderer.h"
 #include "constants.h"
 
 int main()
@@ -11,29 +11,29 @@ int main()
     int displayHeight = GetMonitorHeight(display);
 
     Color skyBlue = Color{135, 206, 235, 255};
-    Shader shader = LoadShader(0, TextFormat("shaders/shadow.fs"));
+    Shader shader = LoadShader(0, TextFormat("src/engine/shaders/shadow.fs"));
 
     Vector2 light_props = {5, 100};
     SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
 
     RenderTexture2D target = LoadRenderTexture(TARGET_WIDTH, TARGET_HEIGHT);
 
-    ToggleFullscreen();
+    // ToggleFullscreen();
     HideCursor(); 
-    SetTargetFPS(50);
+    SetTargetFPS(100);
 
-    World world = World();
+    Renderer renderer = Renderer();
     int lightSource_index = GetShaderLocation(shader, "lightSource");
 
     while (!WindowShouldClose())
     {
-        Vector2 player_position = world.Update();
-        SetShaderValue(shader, lightSource_index, &player_position, SHADER_UNIFORM_VEC2);
+        Vector2 playerPosition = renderer.Update();
+        SetShaderValue(shader, lightSource_index, &playerPosition, SHADER_UNIFORM_VEC2);
         BeginTextureMode(target);
             ClearBackground(skyBlue);
 
             BeginShaderMode(shader);
-                world.Draw();
+                renderer.Draw();
             EndShaderMode();
         EndTextureMode();
 
