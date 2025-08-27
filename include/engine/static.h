@@ -10,7 +10,7 @@ class Static {
         Image image;
 
     public:
-        Static(Texture2D texture, int layer);
+        Static(Texture2D texture, int layer, Vector2 position = {0, 0});
         Vector2 GetPosition();
         int GetLayer();
         Image GetImage();

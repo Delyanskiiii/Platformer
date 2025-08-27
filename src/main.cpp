@@ -18,9 +18,9 @@ int main()
 
     RenderTexture2D target = LoadRenderTexture(TARGET_WIDTH, TARGET_HEIGHT);
 
-    // ToggleFullscreen();
+    ToggleFullscreen();
     HideCursor(); 
-    SetTargetFPS(100);
+    SetTargetFPS(50);
 
     Renderer renderer = Renderer();
     int lightSource_index = GetShaderLocation(shader, "lightSource");
@@ -41,6 +41,9 @@ int main()
             ClearBackground(skyBlue);
             DrawTexturePro(target.texture, (Rectangle){0, 0, float(TARGET_WIDTH), float(-TARGET_HEIGHT)}, (Rectangle){0, 0, float(displayWidth), float(displayHeight)}, (Vector2){0, 0}, 0.0f, WHITE);
             DrawFPS(displayWidth - 80, 0);
+            DrawText(renderer.player.state, displayWidth - 80, 30, 30, BLACK);
+            DrawText(TextFormat("%d", renderer.player.accuratePosition.x), displayWidth - 80, 60, 30, BLACK);
+            DrawText(TextFormat("%d", renderer.player.accuratePosition.y), displayWidth - 80, 90, 30, BLACK);
         EndDrawing();
     }
     UnloadShader(shader);

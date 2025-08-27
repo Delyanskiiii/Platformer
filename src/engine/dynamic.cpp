@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-Dynamic::Dynamic(Texture2D texture, int layer, Image collisionImage) : Static(texture, layer) {
+Dynamic::Dynamic(Texture2D texture, int layer, Vector2 position, Image collisionImage) : Static(texture, layer, position) {
     this->collisionImage = collisionImage;
 }
 
@@ -33,7 +33,7 @@ void Dynamic::Translate(Vector2 destination) {
         if (abs(destination.x - this->position.x) < abs(destination.y - this->position.y)) {
             if (currentPixelLocation.y == destination.y || floor((currentPixelLocation.x + variance.x) * a + b + 0.5) == currentPixelLocation.y) {
                 currentPixelLocation.x += variance.x;
-            } else if (currentPixelLocation.y != destination.y) {
+            } else if (currentPixelLocation.y != destination.y && (int)GetImageColor(this->collisionImage, currentPixelLocation.x, currentPixelLocation.y + variance.y).a == 0) {
                 currentPixelLocation.y += variance.y;
             } else {
                 SetPosition(currentPixelLocation);
@@ -59,4 +59,12 @@ void Dynamic::Translate(Vector2 destination) {
 
 void Dynamic::Update() {
 
+}
+
+bool Dynamic::Grounded(Vector2 location) {
+    if ((int)GetImageColor(this->collisionImage, location.x, location.y + 1).a == 0) {
+        return false;
+    } else {
+        return true;
+    }
 }

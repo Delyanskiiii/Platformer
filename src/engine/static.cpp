@@ -1,7 +1,8 @@
 #include "static.h"
 
-Static::Static(Texture2D texture, int layer) {
+Static::Static(Texture2D texture, int layer, Vector2 position) {
     this->texture = texture;
+    this->position = position;
     this->image = LoadImageFromTexture(texture);
     SetLayer(layer);
 }
