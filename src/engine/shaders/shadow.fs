@@ -14,7 +14,7 @@ int Alpha(float var1) {
     return int(floor(var1 * 20 + 0.5));
 }
 
-float Distance(ivec2 var1, ivec2 var2) {
+float Distance(vec2 var1, vec2 var2) {
     return sqrt(pow(var1.x - var2.x, 2) + pow(var1.y - var2.y, 2));
 }
 
@@ -33,7 +33,10 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
     float a = float(pixelLocation.y - lightLocation.y) / (pixelLocation.x - lightLocation.x);
     float b = pixelLocation.y - a * pixelLocation.x;
     ivec2 currentPixelLocation = lightLocation;
-    int height = 0;
+    vec2 accuratePixelLocation;
+    // int height = 0;
+    int currentPixelHeight = 0;
+    bool shoa = false;
 
     // height = Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha;
 
@@ -52,26 +55,54 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
         if (abs(pixelLocation.x - lightLocation.x) < abs(pixelLocation.y - lightLocation.y)) {
             if (currentPixelLocation.y == pixelLocation.y || floor((currentPixelLocation.x + variance.x) * a + b + 0.5) == currentPixelLocation.y) {
                 currentPixelLocation.x += variance.x;
+                shoa = true;
             } else {
                 currentPixelLocation.y += variance.y;
+                shoa = false;
             }
         } else {
             if (currentPixelLocation.x == pixelLocation.x || floor((currentPixelLocation.y + variance.y - b) / a + 0.5) == currentPixelLocation.x) {
                 currentPixelLocation.y += variance.y;
+                shoa = false;
             } else {
                 currentPixelLocation.x += variance.x;
+                shoa = true;
             }
         }
 
-        height = Alpha(texelFetch(Texture, currentPixelLocation, 0).a) - pixelAlpha;
+        currentPixelHeight = Alpha(texelFetch(Texture, currentPixelLocation, 0).a);
+        // height = currentPixelHeight - pixelAlpha;
 
-        if (height > 0) {
-            if (pow(Distance(lightLocation, currentPixelLocation), 8) * height / 20000 + 1 < height) {
-                height = int(pow(Distance(lightLocation, currentPixelLocation), 8) * height / 20000 + 1);
+        if (currentPixelHeight - pixelAlpha > 0) {
+            // if (pow(Distance(lightLocation, currentPixelLocation), 8) * height / 20000 + 1 < height) {
+            //     height = int(pow(Distance(lightLocation, currentPixelLocation), 8) * height / 20000 + 1);
+            // }
+
+            // if (abs(pixelLocation.x - currentPixelLocation.x) <= height && abs(pixelLocation.y - currentPixelLocation.y) <= height) {
+            //     return 10;
+            // }
+
+            if (shoa) {
+                accuratePixelLocation = vec2(currentPixelLocation.x - variance.x * 0.5, (currentPixelLocation.x - variance.x * 0.5) * a + b);
+            } else {
+                if (lightLocation.y == pixelLocation.y) {
+                    accuratePixelLocation = vec2(currentPixelLocation.x, currentPixelLocation.y - variance.y * 0.5);
+                } else {
+                    accuratePixelLocation = vec2((currentPixelLocation.y - variance.y * 0.5 - b) / a, currentPixelLocation.y - variance.y * 0.5);
+                }
             }
 
-            if (abs(pixelLocation.x - currentPixelLocation.x) <= height && abs(pixelLocation.y - currentPixelLocation.y) <= height) {
-                return 10;
+
+            // if (Distance(pixelLocation, accuratePixelLocation) <= Distance(accuratePixelLocation, lightLocation) * currentPixelHeight / (100 - currentPixelHeight)) {
+            //     return 10;
+            // }
+
+            if (Distance(pixelLocation, currentPixelLocation) * 100 / Distance(lightLocation, pixelLocation) < currentPixelHeight) {
+                if (shoa) {
+                    return 10;
+                } else {
+                    return 100;
+                }
             }
         }
     }
