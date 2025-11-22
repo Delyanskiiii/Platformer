@@ -13,12 +13,12 @@ int main()
     Color skyBlue = Color{135, 206, 235, 255};
     Shader shader = LoadShader(0, TextFormat("src/engine/shaders/shadow.fs"));
 
-    Vector2 light_props = {5, 100};
-    SetShaderValue(shader, GetShaderLocation(shader, "lightProps"), &light_props, SHADER_UNIFORM_VEC2);
+    Vector2 light_range = {400, 0};
+    SetShaderValue(shader, GetShaderLocation(shader, "lightRange"), &light_range, SHADER_UNIFORM_VEC2);
 
     RenderTexture2D target = LoadRenderTexture(TARGET_WIDTH, TARGET_HEIGHT);
 
-    // ToggleFullscreen();
+    ToggleFullscreen();
     HideCursor();
     SetTargetFPS(100);
 

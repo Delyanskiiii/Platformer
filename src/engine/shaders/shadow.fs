@@ -5,67 +5,76 @@ in vec4 fragColor;
 layout(origin_upper_left) in vec4 gl_FragCoord;
 
 uniform sampler2D Texture;
-uniform vec2 lightProps;
+uniform vec2 lightRange;
 uniform vec2 lightSource;
 
 out vec4 finalColor;
 
-// alpha goes from 0 to 20
+// Set alpha from 0 to 20
 int Alpha(float var1) {
     return int(floor(var1 * 20 + 0.5));
 }
 
+// Float distance
 float Distance(vec2 var1, vec2 var2) {
     return sqrt(pow(var1.x - var2.x, 2) + pow(var1.y - var2.y, 2));
 }
 
+// Direction -1 0 1
 int Direction(int var1, int var2) {
     return (var1 > var2) ? 1 : ((var1 < var2) ? -1 : 0);
 }
 
-float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
+bool inShadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
+    // Determine direction and slope
     ivec2 variance = ivec2(Direction(lightLocation.x, pixelLocation.x), Direction(lightLocation.y, pixelLocation.y));
     float a = float(pixelLocation.y - lightLocation.y) / (pixelLocation.x - lightLocation.x);
     float b = pixelLocation.y - a * pixelLocation.x;
+
+    // Variables for possible obstacles
     ivec2 currentPixelLocation = pixelLocation;
-    vec2 accuratePixelLocation, accurateCurrentPixelLocation, accurateLightLocation;
-    // int height = 0;
-    int currentPixelHeight = 0, lightPixelHeight = Alpha(texelFetch(Texture, lightLocation, 0).a);
-    bool shoa = false;
-    bool SHOA = false;
-    int SHOAHeight = 0;
+    vec2 accurateCurrentPixelLocation;
+    int currentPixelHeight;
+
+    // Variables to keep track of original direction light hits the obstacle
+    bool isHorizontalIncrease = false;
+    bool isHorizontalIncreaseNow = false;
+    int currentPixelHeightNow = 0;
+
+    // Bias
+    float bias;
 
     while (currentPixelLocation.x != lightLocation.x || currentPixelLocation.y != lightLocation.y) {
-
+        // Loop through exact pixels that respond to the slope
         if (abs(pixelLocation.x - lightLocation.x) > abs(pixelLocation.y - lightLocation.y)) {
             if (currentPixelLocation.y == lightLocation.y || floor((currentPixelLocation.x + variance.x) * a + b + 0.5) == currentPixelLocation.y) {
                 currentPixelLocation.x += variance.x;
-                shoa = true;
+                isHorizontalIncrease = true;
             } else {
                 currentPixelLocation.y += variance.y;
-                shoa = false;
+                isHorizontalIncrease = false;
             }
         } else {
             if (currentPixelLocation.x == lightLocation.x || floor((currentPixelLocation.y + variance.y - b) / a + 0.5) == currentPixelLocation.x) {
                 currentPixelLocation.y += variance.y;
-                shoa = false;
+                isHorizontalIncrease = false;
             } else {
                 currentPixelLocation.x += variance.x;
-                shoa = true;
+                isHorizontalIncrease = true;
             }
         }
 
-
         currentPixelHeight = Alpha(texelFetch(Texture, currentPixelLocation, 0).a);
 
+        // If we hit an obstacle
         if (currentPixelHeight - pixelAlpha > 0) {
-
-            if (currentPixelHeight > SHOAHeight) {
-                SHOAHeight = currentPixelHeight;
-                SHOA = shoa;
+            if (currentPixelHeight > currentPixelHeightNow) {
+                currentPixelHeightNow = currentPixelHeight;
+                isHorizontalIncreaseNow = isHorizontalIncrease;
             }
 
-            if (SHOA) {
+            // Set up deppending on direction
+            if (isHorizontalIncreaseNow) {
                 accurateCurrentPixelLocation = vec2(currentPixelLocation.x - variance.x * 0.5, (currentPixelLocation.x - variance.x * 0.5) * a + b);
             } else {
                 if (lightLocation.x == pixelLocation.x) {
@@ -75,40 +84,17 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
                 }
             }
             
-            float bias = max(0.05 * (1.0 - dot(vec4(0,0,1,0), vec4(lightLocation.x - pixelLocation.x, lightLocation.y - pixelLocation.y, 20 - currentPixelHeight + pixelAlpha, 0))), 0.005);
-            bias = 0.05 * (1.0 - (20 - currentPixelHeight + pixelAlpha));
+            // Calculate if in shadow with account to bias. If you change the bias people die
+            bias = 0.05 * (currentPixelHeight - pixelAlpha - 19);
             if (Distance(lightLocation, accurateCurrentPixelLocation) - bias > Distance(pixelLocation, accurateCurrentPixelLocation)) {
-                return 10;
+                return true;
             }
 
-            // if (floor((round((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) * 10) + 5) / 10) <= currentPixelHeight - pixelAlpha) {
-            // if (round(Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) <= currentPixelHeight - pixelAlpha) {
-            //     if (SHOA) {
-            //         return 10;
-            //     } else {
-            //         return 100;
-            //     }
-            // }
-            // if (floor((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation))) == currentPixelHeight - pixelAlpha) {
-            //     // return 100;
-            // } else if (floor((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) + 0.15) < currentPixelHeight - pixelAlpha) {
-            //     return 10;
-            // }
-            // if (SHOA) {
-            //     if (floor((round((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) * 10) + 5) / 10) <= currentPixelHeight - pixelAlpha) {
-            //         return 10;
-            //     }
-            // } else {
-            //     if (floor((round((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) * 10) + 5) / 10) <= currentPixelHeight - pixelAlpha) {
-            //         return 100;
-            //     }
-            // }
-
-        } else if (currentPixelHeight < SHOAHeight) {
-            SHOAHeight = 0;
+        } else if (currentPixelHeight < currentPixelHeightNow) {
+            currentPixelHeightNow = 0;
         }
     }
-    return 0;
+    return false;
 }
 
 void main() {
@@ -121,15 +107,18 @@ void main() {
         discard;
     }
     
-    // distance is from 0 to 367
-    // int distance = Distance(lightLocation, pixelLocation);
+    // Is pixel in shadow
+    int pixelAlpha = Alpha(pixelColor.a);
+    bool isPixelInShadow = inShadow(pixelAlpha, lightLocation, pixelLocation);
 
-    float strength = Shadow(Alpha(pixelColor.a), lightLocation, pixelLocation);
+    // Add slight tint based on depth
+    finalColor = vec4(pixelColor.xyz + (pixelAlpha - 10.0) / 100, 1);
 
-    if (strength > 0) {
-        finalColor = vec4(pixelColor.xyz - strength / 100, 1);
-    } else {
-        finalColor = vec4(pixelColor.xyz, 1);
-        // finalColor = vec4(pixelColor.xyz + (0.1 - float(distance / 3670)), 1);
+    float distance = Distance(lightLocation, pixelLocation);
+
+    if (distance <= lightRange.x && isPixelInShadow) {
+        finalColor = vec4(pixelColor.xyz - 0.1, 1);
+    } else if (distance > lightRange.x) {
+        finalColor = vec4(pixelColor.xyz - 0.1, 1);
     }
 }
