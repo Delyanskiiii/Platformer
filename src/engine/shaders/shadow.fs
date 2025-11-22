@@ -5,7 +5,6 @@ in vec4 fragColor;
 layout(origin_upper_left) in vec4 gl_FragCoord;
 
 uniform sampler2D Texture;
-uniform vec2 lightRange;
 uniform vec2 lightSource;
 
 out vec4 finalColor;
@@ -101,6 +100,7 @@ void main() {
     vec4 pixelColor = texture(Texture, fragTexCoord);
     ivec2 lightLocation = ivec2(lightSource.xy);
     ivec2 pixelLocation = ivec2(gl_FragCoord.xy);
+    int lightRange = 400;
 
     //Skip pixel if it's not on the level layer
     if (pixelColor.a == 0) {
@@ -116,9 +116,9 @@ void main() {
 
     float distance = Distance(lightLocation, pixelLocation);
 
-    if (distance <= lightRange.x && isPixelInShadow) {
+    if (distance <= lightRange && isPixelInShadow) {
         finalColor = vec4(pixelColor.xyz - 0.1, 1);
-    } else if (distance > lightRange.x) {
+    } else if (distance > lightRange) {
         finalColor = vec4(pixelColor.xyz - 0.1, 1);
     }
 }
