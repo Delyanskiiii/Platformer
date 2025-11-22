@@ -2,9 +2,9 @@
 #include <iostream>
 #include "renderer.h"
 #include "constants.h"
-
 int main()
 {
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(0, 0, "Main");
     int display = GetCurrentMonitor();
     int displayWidth = GetMonitorWidth(display);
@@ -18,12 +18,14 @@ int main()
 
     RenderTexture2D target = LoadRenderTexture(TARGET_WIDTH, TARGET_HEIGHT);
 
-    ToggleFullscreen();
-    HideCursor(); 
-    SetTargetFPS(50);
+    // ToggleFullscreen();
+    HideCursor();
+    SetTargetFPS(100);
 
     Renderer renderer = Renderer();
     int lightSource_index = GetShaderLocation(shader, "lightSource");
+
+    rlImGuiSetup(true);
 
     while (!WindowShouldClose())
     {
@@ -31,21 +33,29 @@ int main()
         SetShaderValue(shader, lightSource_index, &playerPosition, SHADER_UNIFORM_VEC2);
         BeginTextureMode(target);
             ClearBackground(skyBlue);
-
+            
             BeginShaderMode(shader);
                 renderer.Draw();
             EndShaderMode();
+
         EndTextureMode();
 
         BeginDrawing();
             ClearBackground(skyBlue);
+            rlImGuiBegin();
+            bool open = true;
+
+            if (ImGui::Begin("Test Window", &open))
+            {
+                renderer.Debug();
+            }
+            ImGui::End();
             DrawTexturePro(target.texture, (Rectangle){0, 0, float(TARGET_WIDTH), float(-TARGET_HEIGHT)}, (Rectangle){0, 0, float(displayWidth), float(displayHeight)}, (Vector2){0, 0}, 0.0f, WHITE);
             DrawFPS(displayWidth - 80, 0);
-            DrawText(renderer.player.state, displayWidth - 80, 30, 30, BLACK);
-            DrawText(TextFormat("%d", renderer.player.accuratePosition.x), displayWidth - 80, 60, 30, BLACK);
-            DrawText(TextFormat("%d", renderer.player.accuratePosition.y), displayWidth - 80, 90, 30, BLACK);
+            rlImGuiEnd();
         EndDrawing();
     }
+    rlImGuiShutdown();
     UnloadShader(shader);
     UnloadRenderTexture(target);
     CloseWindow();

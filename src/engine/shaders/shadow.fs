@@ -20,13 +20,7 @@ float Distance(vec2 var1, vec2 var2) {
 }
 
 int Direction(int var1, int var2) {
-    if (var1 > var2) {
-        return 1;
-    } else if (var1 < var2) {
-        return -1;
-    } else {
-        return 0;
-    }
+    return (var1 > var2) ? 1 : ((var1 < var2) ? -1 : 0);
 }
 
 float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
@@ -64,7 +58,7 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
 
         currentPixelHeight = Alpha(texelFetch(Texture, currentPixelLocation, 0).a);
 
-        if (currentPixelHeight - pixelAlpha > 0 && currentPixelHeight - lightPixelHeight > 0) {
+        if (currentPixelHeight - pixelAlpha > 0) {
 
             if (currentPixelHeight > SHOAHeight) {
                 SHOAHeight = currentPixelHeight;
@@ -81,13 +75,35 @@ float Shadow(int pixelAlpha, ivec2 lightLocation, ivec2 pixelLocation) {
                 }
             }
             
-            if (Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation) <= currentPixelHeight - pixelAlpha) {
-                if (SHOA) {
-                    return 10;
-                } else {
-                    return 10;
-                }
+            float bias = max(0.05 * (1.0 - dot(vec4(0,0,1,0), vec4(lightLocation.x - pixelLocation.x, lightLocation.y - pixelLocation.y, 20 - currentPixelHeight + pixelAlpha, 0))), 0.005);
+            bias = 0.05 * (1.0 - (20 - currentPixelHeight + pixelAlpha));
+            if (Distance(lightLocation, accurateCurrentPixelLocation) - bias > Distance(pixelLocation, accurateCurrentPixelLocation)) {
+                return 10;
             }
+
+            // if (floor((round((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) * 10) + 5) / 10) <= currentPixelHeight - pixelAlpha) {
+            // if (round(Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) <= currentPixelHeight - pixelAlpha) {
+            //     if (SHOA) {
+            //         return 10;
+            //     } else {
+            //         return 100;
+            //     }
+            // }
+            // if (floor((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation))) == currentPixelHeight - pixelAlpha) {
+            //     // return 100;
+            // } else if (floor((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) + 0.15) < currentPixelHeight - pixelAlpha) {
+            //     return 10;
+            // }
+            // if (SHOA) {
+            //     if (floor((round((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) * 10) + 5) / 10) <= currentPixelHeight - pixelAlpha) {
+            //         return 10;
+            //     }
+            // } else {
+            //     if (floor((round((Distance(pixelLocation, accurateCurrentPixelLocation) * 20 / Distance(lightLocation, pixelLocation)) * 10) + 5) / 10) <= currentPixelHeight - pixelAlpha) {
+            //         return 100;
+            //     }
+            // }
+
         } else if (currentPixelHeight < SHOAHeight) {
             SHOAHeight = 0;
         }

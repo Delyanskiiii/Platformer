@@ -10,6 +10,10 @@ void Dynamic::SetPosition(Vector2 position) {
     this->position = position;
 }
 
+void Dynamic::SetAccuratePosition(Vector2 position) {
+    this->accuratePosition = {position.x * 10, position.y * 10};
+}
+
 int Dynamic::Direction(int var1, int var2) {
     if (var1 > var2) {
         return 1;
@@ -20,7 +24,8 @@ int Dynamic::Direction(int var1, int var2) {
     }
 }
 
-void Dynamic::Translate(Vector2 destination) {
+void Dynamic::Translate(Vector2 destination, Vector2 accurateDestination) {
+    destination = {int(accurateDestination.x / 10), int(accurateDestination.y / 10)};
     Vector2 variance = {float(Direction(destination.x, this->position.x)), float(Direction(destination.y, this->position.y))};
     float a = float(destination.y - this->position.y) / (destination.x - this->position.x);
     float b = destination.y - a * destination.x;
@@ -37,6 +42,7 @@ void Dynamic::Translate(Vector2 destination) {
                 currentPixelLocation.y += variance.y;
             } else {
                 SetPosition(currentPixelLocation);
+                // SetAccuratePosition(currentPixelLocation);
                 return;
             }
         } else {
@@ -48,12 +54,14 @@ void Dynamic::Translate(Vector2 destination) {
                 currentPixelLocation.y += variance.y;
             } else {
                 SetPosition(currentPixelLocation);
+                // SetAccuratePosition(currentPixelLocation);
                 return;
             }
         }
     }
 
     SetPosition(destination);
+    // SetAccuratePosition(destination);
     return;
 }
 

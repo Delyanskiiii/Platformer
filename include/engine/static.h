@@ -1,6 +1,8 @@
 #pragma once
 #include <raylib.h>
 #include <stdexcept>
+#include "rlImGui.h"
+#include "imgui.h"
 
 class Static {
     protected:
