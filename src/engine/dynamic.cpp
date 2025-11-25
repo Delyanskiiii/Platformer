@@ -32,6 +32,9 @@ void Dynamic::Translate(Vector2 destination, Vector2 accurateDestination) {
     Vector2 currentPixelLocation = this->position;
     Vector2 originalPoint;
 
+    
+    // ImGui::Text("ImageData: %d", int((Color*)collisionImage.data[0]));
+
     while (currentPixelLocation.x != destination.x || currentPixelLocation.y != destination.y) {
         originalPoint = currentPixelLocation;
 

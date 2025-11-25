@@ -111,14 +111,20 @@ void main() {
     int pixelAlpha = Alpha(pixelColor.a);
     bool isPixelInShadow = inShadow(pixelAlpha, lightLocation, pixelLocation);
 
-    // Add slight tint based on depth
-    finalColor = vec4(pixelColor.xyz + (pixelAlpha - 10.0) / 100, 1);
-
     float distance = Distance(lightLocation, pixelLocation);
+    
+    float noise = fract(sin(dot(vec2(lightLocation.x - pixelLocation.x, lightLocation.y - pixelLocation.y), vec2(12.9898, 78.233))) * 43758.5453) / 300.0;
 
-    if (distance <= lightRange && isPixelInShadow) {
-        finalColor = vec4(pixelColor.xyz - 0.1, 1);
-    } else if (distance > lightRange) {
+    if (distance <= lightRange) {
+        if (isPixelInShadow) {
+            finalColor = vec4(pixelColor.xyz - 0.1, 1);
+        } else {
+            float tint = pixelAlpha * pixelAlpha * (1.00 - distance / lightRange) / 2000.00;
+            
+            // Add slight tint based on depth and distance
+            finalColor = vec4(pixelColor.x + tint + noise, pixelColor.y + (tint + noise) * 0.9, pixelColor.z + (tint + noise) * 0.8, 1);
+        }
+    } else {
         finalColor = vec4(pixelColor.xyz - 0.1, 1);
     }
 }
