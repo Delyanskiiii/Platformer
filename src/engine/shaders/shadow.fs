@@ -100,31 +100,35 @@ void main() {
     vec4 pixelColor = texture(Texture, fragTexCoord);
     ivec2 lightLocation = ivec2(lightSource.xy);
     ivec2 pixelLocation = ivec2(gl_FragCoord.xy);
-    int lightRange = 400;
+    int lightRange = 300;
 
-    //Skip pixel if it's not on the level layer
-    if (pixelColor.a == 0) {
-        discard;
-    }
-    
     // Is pixel in shadow
     int pixelAlpha = Alpha(pixelColor.a);
+    //Skip pixel if it's not on the level layer
+    if (pixelAlpha == 0) {
+        discard;
+    }
     bool isPixelInShadow = inShadow(pixelAlpha, lightLocation, pixelLocation);
 
     float distance = Distance(lightLocation, pixelLocation);
-    
     float noise = fract(sin(dot(vec2(lightLocation.x - pixelLocation.x, lightLocation.y - pixelLocation.y), vec2(12.9898, 78.233))) * 43758.5453) / 300.0;
+
+    const vec3 COLD_COLOR = vec3(0.18, 0.20, 0.27);
+
+    vec3 tint = (pixelAlpha / 80.0 + 0.3) * COLD_COLOR.xyz + noise;
 
     if (distance <= lightRange) {
         if (isPixelInShadow) {
-            finalColor = vec4(pixelColor.xyz - 0.1, 1);
+            finalColor = vec4(tint, 1);
         } else {
-            float tint = pixelAlpha * pixelAlpha * (1.00 - distance / lightRange) / 2000.00;
+            // float tint = pixelAlpha * (1.00 - distance / lightRange) / 150.00;
             
             // Add slight tint based on depth and distance
-            finalColor = vec4(pixelColor.x + tint + noise, pixelColor.y + (tint + noise) * 0.9, pixelColor.z + (tint + noise) * 0.8, 1);
+            // finalColor = vec4(pixelColor.x + tint + noise, pixelColor.y + (tint + noise) * 0.9, pixelColor.z + (tint + noise) * 0.8, 1);
+            finalColor = vec4(pixelColor.xyz * (1.00 - pow(distance / lightRange, 2)) + tint * pow(distance / lightRange, 2), 1);
         }
     } else {
-        finalColor = vec4(pixelColor.xyz - 0.1, 1);
+        // finalColor = vec4(pixelColor.xyz * 0.8, 1);
+        finalColor = vec4(tint, 1);
     }
 }
