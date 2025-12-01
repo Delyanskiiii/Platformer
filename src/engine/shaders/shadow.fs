@@ -125,7 +125,7 @@ void main() {
             
             // Add slight tint based on depth and distance
             // finalColor = vec4(pixelColor.x + tint + noise, pixelColor.y + (tint + noise) * 0.9, pixelColor.z + (tint + noise) * 0.8, 1);
-            finalColor = vec4(pixelColor.xyz * (1.00 - pow(distance / lightRange, 2)) + tint * pow(distance / lightRange, 2), 1);
+            finalColor = vec4(pixelColor.xyz * (1.00 - pow(distance / lightRange, 2)) + tint * pow(distance / lightRange, 2) + noise, 1);
         }
     } else {
         // finalColor = vec4(pixelColor.xyz * 0.8, 1);
