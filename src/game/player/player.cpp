@@ -57,58 +57,58 @@ void Player::Update() {
         default: break;
     }
 
-    position.x += input.x;
-    position.y += input.y;
+    // position.x += input.x;
+    // position.y += input.y;
 
-    // switch (currentState)
-    // {
-    //     case IDLE:
-    //     {
+    switch (currentState)
+    {
+        case IDLE:
+        {
 
-    //     } break;
-    //     case RUN:
-    //     {
-    //         if (input.x != 0) {
-    //             velocity.x += input.x * runningAcceleration;
-    //         } else {
-    //             if (velocity.x > 0) {
-    //                 velocity.x -= runningAcceleration;
-    //             } else if (velocity.x < 0) {
-    //                 velocity.x += runningAcceleration;
-    //             }
-    //         }
+        } break;
+        case RUN:
+        {
+            if (input.x != 0) {
+                velocity.x += input.x * runningAcceleration;
+            } else {
+                if (velocity.x > 0) {
+                    velocity.x -= runningAcceleration;
+                } else if (velocity.x < 0) {
+                    velocity.x += runningAcceleration;
+                }
+            }
 
-    //         if (velocity.x > maxRunningSpeed) {
-    //             velocity.x = maxRunningSpeed;
-    //         } else if (velocity.x < -maxRunningSpeed) {
-    //             velocity.x = -maxRunningSpeed;
-    //         }
-    //         velocity.y = 0;
-    //     } break;
-    //     case SLIDE:
-    //     {
-    //         // velocity.x -= input.x * slidingDeceleration;
-    //         velocity.x = 0;
-    //         velocity.y = 0;
-    //     } break;
-    //     case GLIDE:
-    //     {
-    //         velocity.x = input.x * runningAcceleration * 2;
-    //         if (input.y < 0 && grounded) {
-    //             velocity.y = input.y * jumpSpeed;
-    //         } else if (input.y < 0) {
-    //             velocity.y += 5;
-    //         } else {
-    //             velocity.y += 2;
-    //         }
-    //     } break;
-    //     default: break;
-    // }
+            if (velocity.x > maxRunningSpeed) {
+                velocity.x = maxRunningSpeed;
+            } else if (velocity.x < -maxRunningSpeed) {
+                velocity.x = -maxRunningSpeed;
+            }
+            velocity.y = 0;
+        } break;
+        case SLIDE:
+        {
+            // velocity.x -= input.x * slidingDeceleration;
+            velocity.x = 0;
+            velocity.y = 0;
+        } break;
+        case GLIDE:
+        {
+            velocity.x = input.x * runningAcceleration * 2;
+            if (input.y < 0 && grounded) {
+                velocity.y = input.y * jumpSpeed;
+            } else if (input.y < 0) {
+                velocity.y += 5;
+            } else {
+                velocity.y += 2;
+            }
+        } break;
+        default: break;
+    }
 
-    // this->accuratePosition.x += velocity.x;
-    // this->accuratePosition.y += velocity.y;
+    this->accuratePosition.x += velocity.x;
+    this->accuratePosition.y += velocity.y;
 
-    // Translate(position, accuratePosition);
+    Translate(accuratePosition);
 
 }
 

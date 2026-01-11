@@ -11,7 +11,7 @@ class Dynamic : public Static {
         Dynamic(Texture2D texture, int layer, Vector2 position, Image collisionImage);
         virtual void SetPosition(Vector2 position);
         void SetAccuratePosition(Vector2 position);
-        void Translate(Vector2 destination, Vector2 accurateDestination);
+        void Translate(Vector2 accurateDestination);
         void Update();
         bool Grounded(Vector2 location);
 };
