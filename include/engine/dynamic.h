@@ -13,5 +13,6 @@ class Dynamic : public Static {
         void SetAccuratePosition(Vector2 position);
         void Translate(Vector2 accurateDestination);
         void Update();
-        bool Grounded(Vector2 location);
+        int HorizontallyGrounded(Vector2 location);
+        int VerticallyGrounded(Vector2 location);
 };

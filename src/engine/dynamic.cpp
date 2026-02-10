@@ -104,10 +104,26 @@ void Dynamic::Update() {
 
 }
 
-bool Dynamic::Grounded(Vector2 location) {
-    if ((int)GetImageColor(this->collisionImage, location.x, location.y + 1).a == 0) {
-        return false;
+int Dynamic::VerticallyGrounded(Vector2 location) {
+    if ((int)GetImageColor(this->collisionImage, location.x, location.y + 1).a != 0 && (int)GetImageColor(this->collisionImage, location.x, location.y - 1).a != 0) {
+        return 2;
+    } if ((int)GetImageColor(this->collisionImage, location.x, location.y + 1).a != 0) {
+        return 1;
+    } else if ((int)GetImageColor(this->collisionImage, location.x, location.y - 1).a != 0) {
+        return -1;    
     } else {
-        return true;
+        return 0;
+    }
+}
+
+int Dynamic::HorizontallyGrounded(Vector2 location) {
+    if ((int)GetImageColor(this->collisionImage, location.x + 1, location.y).a != 0 && (int)GetImageColor(this->collisionImage, location.x - 1, location.y).a != 0) {
+        return 2;
+    } if ((int)GetImageColor(this->collisionImage, location.x + 1, location.y).a != 0) {
+        return 1;
+    } else if ((int)GetImageColor(this->collisionImage, location.x - 1, location.y).a != 0) {
+        return -1;    
+    } else {
+        return 0;
     }
 }

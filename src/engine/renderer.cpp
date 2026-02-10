@@ -6,7 +6,8 @@ Renderer::Renderer() {
 }
 
 Vector2 Renderer::Update() {
-    this->player.Update();
+    input = inputer.GetInput();
+    this->player.Update(input);
     return this->player.GetPosition();
 }
 
@@ -17,6 +18,7 @@ void Renderer::Draw() {
 }
 
 void Renderer::Debug() {
+    ImGui::Text("Input: %d, %d", int(input.x), int(input.y));
     // int health = 100;
     // float score = 95.5f;
     // const char* name = "Player1";

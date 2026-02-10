@@ -100,7 +100,7 @@ void main() {
     vec4 pixelColor = texture(Texture, fragTexCoord);
     ivec2 lightLocation = ivec2(lightSource.xy);
     ivec2 pixelLocation = ivec2(gl_FragCoord.xy);
-    int lightRange = 300;
+    int lightRange = 150;
 
     // Is pixel in shadow
     int pixelAlpha = Alpha(pixelColor.a);
@@ -115,20 +115,43 @@ void main() {
 
     const vec3 COLD_COLOR = vec3(0.18, 0.20, 0.27);
 
-    vec3 tint = (pixelAlpha / 80.0 + 0.3) * COLD_COLOR.xyz + noise;
+    vec3 tint = (pixelAlpha / 40.0 + 0.3) * COLD_COLOR.xyz + noise;
 
-    if (distance <= lightRange) {
-        if (isPixelInShadow) {
-            finalColor = vec4(tint, 1);
-        } else {
-            // float tint = pixelAlpha * (1.00 - distance / lightRange) / 150.00;
-            
-            // Add slight tint based on depth and distance
-            // finalColor = vec4(pixelColor.x + tint + noise, pixelColor.y + (tint + noise) * 0.9, pixelColor.z + (tint + noise) * 0.8, 1);
-            finalColor = vec4(pixelColor.xyz * (1.00 - pow(distance / lightRange, 2)) + tint * pow(distance / lightRange, 2) + noise, 1);
-        }
-    } else {
-        // finalColor = vec4(pixelColor.xyz * 0.8, 1);
-        finalColor = vec4(tint, 1);
+    if (distance > lightRange) {
+        distance = lightRange * 2;
     }
+
+
+
+    // finalColor = vec4((((1.00 - pow(distance / lightRange, 2)) / 2 + pixelAlpha / 40.0)) * pixelColor.xyz, 1);
+
+
+    finalColor = vec4((1.0 - pow(distance / lightRange, 2)) * pixelColor.xyz + (pow(distance / lightRange, 2) - 0.5) * (pixelAlpha / 20.0) * COLD_COLOR.xyz, 1);
+
+    // if (isPixelInShadow) {
+    //     finalColor = vec4((((1.00 - pow(lightRange / lightRange, 2)) / 2 + pixelAlpha / 40.0)) * pixelColor.xyz, 1);
+    // }
+    // finalColor = vec4((1.00 - pow(distance / lightRange, 2) + pixelAlpha / 20.0 + pixelColor.xyz) / 3, 1);
+
+    // if (distance <= lightRange) {
+    //     if (isPixelInShadow) {
+    //         finalColor = vec4(tint, 1);
+    //     } else {
+    //         // float tint = pixelAlpha * (1.00 - distance / lightRange) / 150.00;
+            
+    //         // Add slight tint based on depth and distance
+    //         // finalColor = vec4(pixelColor.x + tint + noise, pixelColor.y + (tint + noise) * 0.9, pixelColor.z + (tint + noise) * 0.8, 1);
+    //         finalColor = vec4(pixelColor.xyz * (1.00 - pow(distance / lightRange, 2)) + tint * pow(distance / lightRange, 2) + noise, 1);
+    //     }
+    // } else {
+    //     // finalColor = vec4(pixelColor.xyz * 0.8, 1);
+    //     finalColor = vec4(tint, 1);
+    // }
+
+
+
+
+
+
+    finalColor = vec4(pixelColor.xyz, 1);
 }
